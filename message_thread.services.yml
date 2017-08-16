@@ -1,0 +1,6 @@
+services:
+#  message_thread.route_subscriber:
+#    class: Drupal\message_thread\Routing\MessageThreadRouteSubscriber
+#    arguments: ['@entity_type.manager', '@entity_type.manager']
+#    tags:
+#      - { name: event_subscriber }

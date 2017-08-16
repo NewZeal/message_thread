@@ -1,0 +1,11 @@
+administer message threads:
+  title: 'Administer message threads'
+  description: 'Access to administer message threads.'
+
+overview message threads:
+  title: 'Overview message threads'
+  description: 'Access to view message threads overview page.'
+
+bypass message thread access control:
+  title: 'Bypass message thread access control'
+  description: 'Bypass message thread access control'

@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.message_thread.field_thread_title
+    - message_thread.template.conversation
+id: message_thread.conversation.field_thread_title
+field_name: field_thread_title
+entity_type: message_thread
+bundle: conversation
+label: Title
+description: 'A title to give this conversation'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

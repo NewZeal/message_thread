@@ -1,0 +1,285 @@
+<?php
+/**
+ * @file
+ *   Module functions and hooks for message_thread
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\message_thread\Entity\MessageThreadTemplate;
+use Drupal\message_thread\Entity\MessageThread;
+use Drupal\views\Views;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\message\Entity\MessageTemplate;
+use Drupal\user\Entity\User;
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Implements hook_help().
+ */
+function message_thread_help($route_name, RouteMatchInterface $arg) {
+  switch ($route_name) {
+    case 'help.page.message_thread':
+      $output = file_get_contents(drupal_get_path('module', 'message_thread') . '/README.md');
+      return \Drupal::moduleHandler()->moduleExists('markdown') ? \Drupal\Component\Utility\Xss::filterAdmin(\Drupal::moduleHandler()->invoke('markdown', 'filter', ['process', 0, -1, $output])) : '<h3>Message Private README</h3><pre>' . \Drupal\Component\Utility\Html::escape($output) . '</pre>';
+  }
+}
+
+function message_thread_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  // When a message is created we need to ensure that the participants are included
+  // This is best done in the validation hook to ensure participants are not missed from submit functions
+
+  $thread_templates = \Drupal::entityTypeManager()->getListBuilder('message_thread_template')->load();
+  foreach ($thread_templates as $name => $template) {
+    $settings = $template->getSettings();
+    $message_template = MessageTemplate::load($settings['message_template']);
+    $message_form_id = 'message_' . $message_template->getTemplate() . '_form';
+    if ($form_id == $message_form_id) {
+      $parameters = \Drupal::routeMatch()->getParameters();
+
+      $owner = $form['uid']['widget'][0]['target_id']['#default_value'];
+
+      if ($parameters->has('message_thread')) {
+        $form['message_thread'] = [
+          '#type' => 'hidden',
+          '#value' => $parameters->get('message_thread')
+        ];
+        $message_thread = MessageThread::load( $parameters->get('message_thread'));
+        $participants = $message_thread->get('field_thread_participants')->getValue();
+        $widget_base = $form['field_message_private_to_user']['widget'][0];
+        foreach ($participants as $key => $participant) {
+          // Don't include the sender
+          if ($participant['target_id'] == $owner->id()) {
+            unset ($form['field_message_private_to_user']['widget'][$key]);
+            continue;
+          }
+          $form['field_message_private_to_user']['widget'][$key] = $widget_base;
+          $form['field_message_private_to_user']['widget'][$key]['target_id']['#default_value'] = User::load($participant['target_id']);
+        }
+
+
+        foreach (array_keys($form['actions']) as $action) {
+          if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+            $form['actions'][$action]['#submit'][] = 'message_thread_submit_message';
+          }
+        }
+
+        break;
+        // Todo If there is no message thread parameter then we abort
+      }
+
+    }
+
+  }
+}
+
+/*
+ * Submit callback
+ */
+function message_thread_submit_message(array &$form, FormStateInterface $form_state) {
+  // Save the relationship between the thread and the message
+  db_insert('message_thread_index')
+    ->fields(
+      array(
+        'mid' => $form_state->getValue('mid'),
+        'thread_id' => $form_state->getValue('message_thread'),
+        'created' => REQUEST_TIME
+      )
+    )->execute();
+}
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function message_thread_entity_extra_field_info() {
+  $bundles = \Drupal::entityManager()->getBundleInfo('message_thread');
+
+  foreach ($bundles as $machine_name => $bundle) {
+
+    $extra_fields['message_thread'][$machine_name]['display']['message_thread_messages'] = [
+      'label' => t('Messages'),
+      'description' => t('Show all messages inside a thread'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['message_thread_reply'] = [
+      'label' => t('Reply'),
+      'description' => t('Reply to this thread'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['uid'] = [
+      'label' => t('Author'),
+      'description' => t('Creator of this thread'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['created'] = [
+      'label' => t('Created'),
+      'description' => t('Date this thread was created'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+  }
+
+  return $extra_fields;
+}
+
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function message_thread_form_entity_view_display_edit_form_alter($form, $form_state) {
+//  ksm($form['fields']['message_thread_messages']['plugin']['type']);
+//  $form['fields']['messages']['settings_edit'] = array(
+//
+//  );
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function message_thread_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+
+  // Add the link to all message thread types
+  // Maybe this should be controlled through settings but let's see if there are other uses for this module first
+  // Other than as conversation threads
+  if ($entity->getEntityTypeId() === 'message_thread') {
+    if ($component = $display->getComponent('message_thread_messages')) {
+      $template = $entity->bundle();
+      $config_entity = MessageThreadTemplate::load($template);
+      $settings = $config_entity->getSettings();
+
+      $build['message_thread_messages'] = [
+        0 => message_thread_get_messages_display($settings, $entity),
+        '#weight' => $component['weight']
+      ];
+    }
+    if ($component = $display->getComponent('message_thread_reply')) {
+      $build['reply'] = message_thread_reply_link($entity, $component);
+    }
+
+  }
+}
+
+/**
+ * Helper function to display the messages as a View
+ * @param $settings
+ * @return array|bool|null
+ */
+function message_thread_get_messages_display($settings, $entity) {
+  $view_name = $settings['view_id'];
+  $display_id = $settings['view_display_id'];
+  $view = Views::getView($view_name);
+  // Someone may have deleted the View.
+  if (!is_object($view)) {
+    return FALSE;
+  }
+
+  $view->setDisplay($display_id);
+  $view->setArguments(array($entity->id()));
+  $view->build($display_id);
+  $view->preExecute();
+  $view->execute($display_id);
+
+  if (!empty($view->result) || !empty($view->empty)) {
+    return $view->buildRenderable($display_id);
+  }
+  return FALSE;
+}
+
+function message_thread_reply_link($entity, $component) {
+  // Todo template should reference actual template
+  $params = array(
+    'message_template' => 'private_message',
+    'message_thread' => $entity->id()
+  );
+  $options = [
+    'query' => [
+      'destination' => '/message-thread/' . $entity->id()
+    ]
+  ];
+  $url = Url::fromRoute('message_thread.reply', $params, $options);
+  return array(
+    '#type' => 'link',
+    '#url' => $url,
+    '#title' => t('Reply'),
+    '#weight' => $component['weight'],
+    '#attributes' => array(
+      'class' => array('message-thread-reply')
+    )
+  );
+}
+
+/*
+ * Message submit callback
+ * See Drupal\message_thread\Controller\MessageThreadController.php
+ */
+function message_thread_add_message_form_submit(&$form, FormStateInterface &$form_state) {
+  $values = $form_state->getValues();
+  return;
+
+
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ *
+ * Extend the message entity type's field by providing display handlers.
+ */
+function message_thread_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  // Alter the uid and created field to include display settings.
+  if ($entity_type->id() != 'message_thread') {
+    return;
+  }
+
+  if (!empty($fields['uid'])) {
+    /* @var Drupal\Core\Field\BaseFieldDefinition $fields['uid'] */
+    $fields['uid']
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        '#group' => 'advanced',
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => '',
+        ],
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setRequired(TRUE);
+  }
+  if (!empty($fields['created'])) {
+    $fields['created']
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+  }
+}
+
+
+/**
+ * Implements hook_message_thread_access_control().
+ *
+ * @param $params
+ */
+function message_thread_message_thread_access_control($params) {
+  $entity = $params[0];
+  $operation = $params[1];
+  $account = $params[2];
+  // Get the participants
+  $participants = $entity->get('field_thread_participants')->getValue();
+  foreach ($participants as $participant) {
+    if ($participant['target_id'] == $account->id()) {
+      return AccessResult::allowed();
+    }
+  }
+}

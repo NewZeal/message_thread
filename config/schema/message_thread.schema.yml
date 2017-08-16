@@ -1,0 +1,36 @@
+message_thread.message_thread_template.*:
+  type: config_entity
+  label: 'Message thread template'
+  mapping:
+    template:
+      type: string
+      label: 'Machine-readable name'
+    label:
+      type: label
+      label: 'Label'
+    description:
+      type: text
+      label: 'Description'
+    message_template:
+      type: string
+      label: 'Message Template'
+    text:
+      type: sequence
+      label: 'Message Text'
+      sequence:
+        type: text_format
+        label: 'Text'
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        'token options':
+          type: mapping
+          label: 'Token options'
+          mapping:
+            clear:
+              type: boolean
+              label: 'Clear empty tokens'
+            token replace:
+              type: boolean
+              label: 'Replace tokens'

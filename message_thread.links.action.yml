@@ -1,0 +1,11 @@
+message_thread.template_add:
+  route_name: message_thread.template_add
+  title: 'Add message thread template'
+  appears_on:
+    - message_thread.overview_templates
+
+message_thread.user.add:
+  route_name: message_thread.add
+  title: 'Create a new thread for...'
+  appears_on:
+    - entity.user.canonical

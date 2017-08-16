@@ -1,0 +1,11 @@
+name: 'Message Thread'
+description: 'Enable messages to be grouped into threads or conversations.'
+core: 8.x
+package: Message
+type: module
+configure: message_thread.admin_settings
+dependencies:
+  - views
+  - message
+  - message_notify
+  - message_ui

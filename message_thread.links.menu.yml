@@ -1,0 +1,6 @@
+message_thread.overview_templates:
+  title: 'Message thread templates'
+  parent: system.admin_structure
+  description: 'Manage message templates.'
+  route_name: message_thread.overview_templates
+
