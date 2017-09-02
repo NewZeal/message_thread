@@ -119,7 +119,6 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     }
     unset( $form['#submit']);
 
-//ksm($form);
     return $form;
   }
 

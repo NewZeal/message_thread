@@ -18,19 +18,12 @@ content:
     label: inline
     settings: {  }
     third_party_settings: {  }
-  field_thread_title:
-    weight: 0
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
   message_thread_messages:
-    weight: 3
+    weight: 2
     settings: {  }
     third_party_settings: {  }
   message_thread_reply:
-    weight: 2
+    weight: 0
     settings: {  }
     third_party_settings: {  }
   messages:
@@ -41,4 +34,5 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_thread_title: true
   reply: true

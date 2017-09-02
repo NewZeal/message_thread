@@ -123,6 +123,55 @@ class MessageThreadTemplateForm extends EntityForm {
     ];
 
     /*
+ * Message thread views
+ */
+    $options = ['_none' => 'None'];
+    $options += $this->getMessageViews('message_thread_field_data');
+    $form['settings']['thread_view_id'] = [
+      '#title' => $this->t('Message Thread View'),
+      '#type' => 'select',
+      '#options' => $options,
+      '#default_value' => isset($settings['thread_view_id']) ? $settings['thread_view_id'] : '',
+      '#description' => $this->t('Select the View you wish to use to display threads messages of this type in the tab on the User page.'),
+      '#target_type' => 'view',
+      '#ajax' => array(
+        'callback' => array($this, 'getThreadDisplayIds'),
+        'event' => 'change',
+        'progress' => array(
+          'type' => 'throbber',
+          'message' => t('Getting display Ids...'),
+        ),
+      )
+    ];
+
+    $default_value = isset($settings['thread_view_id']) ? $settings['thread_view_id'] : '';
+    if ($default_value == '') {
+      $options = $this->getAllViewsDisplayIds();
+    }
+    else {
+      $options = $this->getViewDisplayIds($settings['thread_view_id']);
+    }
+
+    $form['settings']['thread_view_display_id'] = [
+      '#title' => $this->t('Message Thread View Display'),
+      '#type' => 'select',
+      '#options' => $options,
+      '#default_value' => isset($settings['thread_view_display_id']) ? $settings['thread_view_display_id'] : '',
+      '#description' => $this->t('Select the Display from the View you selected above.'),
+      '#attributes' => array(
+        'class' => array(
+          'message-thread-view-display-id',
+        ),
+      ),
+      '#states' => array(
+        'visible' => array(
+          ':input[name="settings[thread_view_id]"]' => array('!value' => '_none'),
+        ),
+      ),
+
+    ];
+
+    /*
      * Message Views
      */
     $form['settings']['view_id'] = [
@@ -130,7 +179,7 @@ class MessageThreadTemplateForm extends EntityForm {
       '#type' => 'select',
       '#options' => $this->getMessageViews(),
       '#default_value' => isset($settings['view_id']) ? $settings['view_id'] : '',
-      '#description' => $this->t('Select the View you wish to use to display messages of this type.'),
+      '#description' => $this->t('Select the View you wish to use to display messages of this type when viewing a thread.'),
       '#target_type' => 'view',
       '#ajax' => array(
         'callback' => array($this, 'getDisplayIds'),
@@ -169,54 +218,6 @@ class MessageThreadTemplateForm extends EntityForm {
 
     ];
 
-    /*
-     * Message thread views
-     */
-    $options = ['_none' => 'None'];
-    $options += $this->getMessageViews('message_thread_field_data');
-    $form['settings']['thread_view_id'] = [
-      '#title' => $this->t('Message Thread View'),
-      '#type' => 'select',
-      '#options' => $options,
-      '#default_value' => isset($settings['thread_view_id']) ? $settings['thread_view_id'] : '',
-      '#description' => $this->t('Select the View you wish to use to display messages of this type.'),
-      '#target_type' => 'view',
-      '#ajax' => array(
-        'callback' => array($this, 'getThreadDisplayIds'),
-        'event' => 'change',
-        'progress' => array(
-          'type' => 'throbber',
-          'message' => t('Getting display Ids...'),
-        ),
-      )
-    ];
-
-    $default_value = isset($settings['thread_view_id']) ? $settings['thread_view_id'] : '';
-    if ($default_value == '') {
-      $options = $this->getAllViewsDisplayIds();
-    }
-    else {
-      $options = $this->getViewDisplayIds($settings['thread_view_id']);
-    }
-
-    $form['settings']['thread_view_display_id'] = [
-      '#title' => $this->t('Message Thread View Display'),
-      '#type' => 'select',
-      '#options' => $options,
-      '#default_value' => isset($settings['thread_view_display_id']) ? $settings['thread_view_display_id'] : '',
-      '#description' => $this->t('Select the Display from the View you selected above.'),
-      '#attributes' => array(
-        'class' => array(
-          'message-thread-view-display-id',
-        ),
-      ),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="settings[thread_view_id]"]' => array('!value' => '_none'),
-        ),
-      ),
-
-    ];
 
     $form['description'] = [
       '#title' => $this->t('Description'),

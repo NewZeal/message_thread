@@ -9,3 +9,6 @@ overview message threads:
 bypass message thread access control:
   title: 'Bypass message thread access control'
   description: 'Bypass message thread access control'
+
+permission_callbacks:
+  - Drupal\message_thread\MessageThreadPermissions::permissions

@@ -59,6 +59,8 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
           $form['field_message_private_to_user']['widget'][$key] = $widget_base;
           $form['field_message_private_to_user']['widget'][$key]['target_id']['#default_value'] = User::load($participant['target_id']);
         }
+        // We also should disable the to field because this is controlled from the thread
+        $form['field_message_private_to_user']['#disabled'] = TRUE;
 
 
         foreach (array_keys($form['actions']) as $action) {
@@ -90,6 +92,7 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
       )
     )->execute();
 }
+
 /**
  * Implements hook_entity_extra_field_info().
  */
@@ -129,17 +132,6 @@ function message_thread_entity_extra_field_info() {
   }
 
   return $extra_fields;
-}
-
-
-/**
- * Implements hook_form_BASE_FORM_ID_alter().
- */
-function message_thread_form_entity_view_display_edit_form_alter($form, $form_state) {
-//  ksm($form['fields']['message_thread_messages']['plugin']['type']);
-//  $form['fields']['messages']['settings_edit'] = array(
-//
-//  );
 }
 
 /**
@@ -282,4 +274,12 @@ function message_thread_message_thread_access_control($params) {
       return AccessResult::allowed();
     }
   }
+}
+
+/*
+ * Implements hook_local_tasks_alter().
+ */
+function message_thread_local_tasks_alter(&$local_tasks) {
+  //We no longer need the private message local task on the user page
+  unset($local_tasks['message_private.messages']);
 }

@@ -279,7 +279,7 @@ class MessageThreadForm extends ContentEntityForm {
       drupal_set_message(t('@type %title has been updated.', $t_args));
     }
 
-    // Redirect to message view display if user has access.
+    // Redirect to message thread view display if user has access.
     if ($message_thread->id()) {
       $form_state->setValue('thread_id', $message_thread->id());
       $form_state->set('thread_id', $message_thread->id());

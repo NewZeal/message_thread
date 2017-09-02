@@ -6,6 +6,4 @@ type: module
 configure: message_thread.admin_settings
 dependencies:
   - views
-  - message
-  - message_notify
-  - message_ui
+  - message_private

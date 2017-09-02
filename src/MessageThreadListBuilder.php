@@ -85,11 +85,13 @@ class MessageThreadListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+
     /** @var Message $entity */
     return [
       'changed' => $this->dateService->format($entity->getCreatedTime(), 'short'),
+//      'title' => $this->get('field_thread_title')->getValue()[0]['value'],
       'text' => $entity->getText(),
-      'tread' => $entity->getThread()->label(),
+      'template' => $entity->getTemplate()->label(),
       'author' => $entity->getOwner()->label(),
     ];
   }
