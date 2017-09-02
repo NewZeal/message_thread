@@ -17,6 +17,16 @@ use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
 use Drupal\Core\Access\AccessResult;
 
+
+/**
+ * Implements hook_installed.
+ * Flush cache after install to ensure that all routes are read
+ */
+function message_thread_modules_installed() {
+  drupal_flush_all_caches();
+}
+
+
 /**
  * Implements hook_help().
  */
