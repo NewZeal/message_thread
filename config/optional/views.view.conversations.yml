@@ -7,6 +7,9 @@ dependencies:
     - message_thread.template.conversation
   module:
     - message_thread
+    - user
+_core:
+  default_config_hash: UqAY1HdOAH7JtNrXnK5OGCxXSIJ6uZhbgRMT488UMSw
 id: conversations
 label: Conversations
 module: views
@@ -23,8 +26,9 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'create and receive conversation'
       cache:
         type: tag
         options: {  }
@@ -288,12 +292,13 @@ display:
           plugin_id: numeric
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags:
         - 'config:field.storage.message_thread.field_thread_participants'
         - 'config:field.storage.message_thread.field_thread_title'
@@ -320,12 +325,13 @@ display:
         description: ''
         weight: 0
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags:
         - 'config:field.storage.message_thread.field_thread_participants'
         - 'config:field.storage.message_thread.field_thread_title'

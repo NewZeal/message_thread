@@ -56,8 +56,6 @@ message_thread.add_page:
     # appears_on: # Should we define a route for converting MENU_LOCAL_ACTION.
 #  requirements:
 #     _entity_create_access: 'message_thread'
-  options:
-    _admin_route: TRUE
 
 message_thread.add:
   path: '/message-thread/add/{message_thread_template}'
@@ -67,11 +65,6 @@ message_thread.add:
     _title: 'Create Message Thread'
   requirements:
     _entity_create_access: 'message_thread:{message_thread_template}'
-  options:
-    _admin_route: TRUE
-    parameters:
-      message_thread_template:
-        with_config_overrides: FALSE
 
 entity.message_thread.edit_form:
   path: '/message-thread/{message_thread}/edit'
