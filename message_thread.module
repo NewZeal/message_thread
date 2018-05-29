@@ -131,14 +131,14 @@ function message_thread_preprocess_links(&$variables) {
       }
       $operation = strtolower($link['link']['#title']->__toString());
       if (substr($route_name, 0, 15) == 'entity.message.') {
-        $message_access_manager = new MessagePrivateAccessControlHandler($entity->getEntityType());
-        $access = $message_access_manager->checkAccess($entity, $operation, $account);
-
+//        $message_access_manager = new MessagePrivateAccessControlHandler($entity->getEntityType());
+//        $access = $message_access_manager->checkAccess($entity, $operation, $account);
+        $access = message_private_message_access($entity, $operation, $account);
         // Disable link if user does not have access
         if ($access instanceof Drupal\Core\Access\AccessResultForbidden) {
           unset ($variables['links'][$key]);
         }
-       }
+      }
     }
   }
 }
