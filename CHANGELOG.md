@@ -15,3 +15,6 @@ Fix access to conversation view
 Test and ensure permissions for users are correct
 Add suitable breadcrumb for navigation
 Modify contextual dropdowns for proper access
+
+8.x-1.0-alpha7
+Remove reference to MessagePrivateAccessControlHandler which doesn't exist yet
