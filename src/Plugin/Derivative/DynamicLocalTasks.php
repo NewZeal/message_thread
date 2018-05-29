@@ -71,7 +71,6 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
       $settings = $template->getSettings();
 
       // Thread page tabs
-
       $view_route = 'view.' . $settings['thread_view_id'] . '.' . $settings['thread_view_display_id'];
       $exists = count($this->routeProvider->getRoutesByNames([$view_route])) === 1;
       if (!$exists) {

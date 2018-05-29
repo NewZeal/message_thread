@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies: {  }
 template: conversation
-label: Conversations
+label: Messages
 description: 'Message thread to accompany Private Messages'
 message_template: private_message
 view_display: null

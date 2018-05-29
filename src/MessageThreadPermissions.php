@@ -41,7 +41,7 @@ class MessageThreadPermissions implements ContainerInjectionInterface {
   }
 
   /**
-   * Get permissions for Taxonomy Views Integrator.
+   * Get permissions for Message Thread .
    *
    * @return array
    *   Permissions array.
@@ -51,8 +51,11 @@ class MessageThreadPermissions implements ContainerInjectionInterface {
 
     foreach ($this->entityManager->getStorage('message_thread_template')->loadMultiple() as $template) {
       $permissions += [
-        'create and receive ' . $template->id() => [
+        'create and receive ' . $template->id() . ' message threads' => [
           'title' => $this->t('Able to participate in %thread threads', array('%thread' => $template->label())),
+        ],
+        'view own ' . $template->id() . ' message thread tab' => [
+          'title' => $this->t('View own %thread tab', array('%thread' => $template->label()))
         ]
       ];
     }

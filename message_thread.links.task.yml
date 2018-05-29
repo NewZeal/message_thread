@@ -8,6 +8,9 @@ entity.message_thread.canonical:
   base_route: entity.message_thread.canonical
   title: View
 
+#  Tabs for message management
+
+
 ## Provide dynamic local tasks.
 message_thread.dynamic_tasks:
   deriver: 'Drupal\message_thread\Plugin\Derivative\DynamicLocalTasks'

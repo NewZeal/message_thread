@@ -49,7 +49,6 @@ class MessageForm extends MessageMessageForm {
     /* @var $message Message */
     $message = $this->entity;
     $values = $form_state->getValues();
-    ksm($values);
     return;
     // Save the relationship between the thread and the message
     db_insert('message_thread_index')

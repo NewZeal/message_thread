@@ -6,12 +6,12 @@ dependencies:
     - field.storage.message_thread.field_thread_title
     - message_thread.template.conversation
   module:
+    - message_private
     - message_thread
-    - user
 _core:
   default_config_hash: UqAY1HdOAH7JtNrXnK5OGCxXSIJ6uZhbgRMT488UMSw
 id: conversations
-label: Conversations
+label: Messages
 module: views
 description: ''
 tag: ''
@@ -26,9 +26,8 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
-        options:
-          perm: 'create and receive conversation'
+        type: message_private
+        options: {  }
       cache:
         type: tag
         options: {  }
@@ -106,7 +105,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: Conversation
           exclude: false
           alter:
             alter_text: false
@@ -236,7 +235,7 @@ display:
           entity_field: template
           plugin_id: bundle
       sorts: {  }
-      title: Conversations
+      title: Messages
       header:
         area:
           id: area
@@ -312,7 +311,7 @@ display:
       path: user/%/conversations
       menu:
         type: 'default tab'
-        title: Conversations
+        title: Messages
         description: ''
         expanded: false
         parent: user.page

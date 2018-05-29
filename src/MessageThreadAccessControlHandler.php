@@ -6,6 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\message_private\MessagePrivateAccessControlHandler;
 
 /**
  * Access controller for the comment entity.
@@ -20,7 +21,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
    * Link the activities to the permissions. checkAccess is called with the
    * $operation as defined in the routing.yml file.
    */
-  protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+  public function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
 
     // Return early if we have bypass or create any template permissions.
     if ($account->hasPermission('bypass message thread access control') || $account->hasPermission($operation . ' any message thread template')) {
@@ -28,7 +29,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     }
 
     $params = [$entity, $operation, $account];
-    ksm($params);
+
     /** @var \Drupal\Core\Access\AccessResult[] $results */
     $results = $this
       ->moduleHandler()
@@ -42,7 +43,45 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
       return $result;
     }
 
-    return AccessResult::allowedIfHasPermission($account, $operation . ' ' . $entity->bundle() . ' message thread')->cachePerPermissions();
+    $current_id = $account->id();
+    $allow = [];
+    // Allow all participants to view
+    if ($operation == 'view' && $entity->get('field_thread_participants')->getValue() != NULL) {
+      if (AccessResult::allowedIfHasPermission($account, 'view own messages')) {
+        $participants = $entity->get('field_thread_participants')->getValue();
+        foreach ($participants as $participant) {
+          $allow[] = $participant['target_id'];
+        }
+      }
+    }
+    // Allow author of thread to edit and delete
+    if ($entity->get('uid')->getValue() != NULL) {
+      switch ($operation) {
+        case 'view':
+          if (AccessResult::allowedIfHasPermission($account, 'view own messages')) {
+            $allow[] = $entity->get('uid')->getValue()[0]['target_id'];
+          }
+          break;
+
+        case 'edit':
+          if (AccessResult::allowedIfHasPermission($account, 'edit own messages')) {
+            $allow[] = $entity->get('uid')->getValue()[0]['target_id'];
+          }
+          break;
+
+        case 'delete':
+          if (AccessResult::allowedIfHasPermission($account, 'delete own messages')) {
+            $allow[] = $entity->get('uid')->getValue()[0]['target_id'];
+          }
+          break;
+
+      }
+
+    }
+    if (in_array($current_id, $allow)) {
+      return AccessResult::allowed();
+    }
+    else return AccessResult::forbidden();
   }
 
   /**
@@ -58,7 +97,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     }
 
     /** @var \Drupal\Core\Access\AccessResult[] $results */
-    $results = $this->moduleHandler()->invokeAll('message_message thread_create_access_control', [$entity_bundle,
+    $results = $this->moduleHandler()->invokeAll('message_thread_create_access_control', [$entity_bundle,
       $account]);
 
     foreach ($results as $result) {
@@ -66,19 +105,20 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
         continue;
       }
 
+      // We only return this if a result is not neutral, meaning that this hook overrides the default
       return $result;
     }
 
     // When we have a bundle, check access on that bundle.
     if ($entity_bundle) {
-      return AccessResult::allowedIfHasPermission($account, 'create ' . $entity_bundle . ' message_thread')
+      return AccessResult::allowedIfHasPermission($account, 'create and receive ' . $entity_bundle . ' message threads')
         ->cachePerPermissions();
     }
 
     // With no bundle, e.g. on message thread/add, check access to any message thread bundle.
     // @todo: perhaps change this method to a service as in NodeAddAccessCheck.
     foreach (\Drupal::entityManager()->getStorage('message_thread_template')->loadMultiple() as $template) {
-      $access = AccessResult::allowedIfHasPermission($account, 'create ' . $template->id() . ' message_thread');
+      $access = AccessResult::allowedIfHasPermission($account, 'create and receive ' . $template->id() . ' message threads');
 
       // If access is allowed to any of the existing bundles return allowed.
       if ($access->isAllowed()) {

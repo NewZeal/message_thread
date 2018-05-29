@@ -38,8 +38,8 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
         'id' => 'standard',
         'base' => 'message_thread_field_data',
         'base field' => 'thread_id',
-        'title' => $this->t('Message Thread'),
-        'label' => $this->t('Link the message thread index to the thread.'),
+        'title' => $this->t('Message Thread to Thread'),
+        'description' => $this->t('Link the message thread index to the thread.'),
       ),
     );
     $data['message_thread_index']['mid'] = array(
@@ -52,7 +52,7 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
         'base' => 'message_field_data',
         'base field' => 'mid',
         'title' => $this->t('Message'),
-        'label' => $this->t('Link the message thread index to the message.'),
+        'description' => $this->t('Link the message thread index to the message.'),
       ),
     );
     return $data;

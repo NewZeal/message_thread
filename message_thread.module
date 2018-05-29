@@ -16,6 +16,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
 use Drupal\Core\Access\AccessResult;
+use Drupal\message_thread\MessageThreadAccessControlHandler;
+use Drupal\message_private\MessagePrivateAccessControlHandler;
 
 
 /**
@@ -38,6 +40,9 @@ function message_thread_help($route_name, RouteMatchInterface $arg) {
   }
 }
 
+/*
+ * Implements hook_form_alter().
+ */
 function message_thread_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   // When a message is created we need to ensure that the participants are included
   // This is best done in the validation hook to ensure participants are not missed from submit functions
@@ -101,6 +106,41 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
         'created' => REQUEST_TIME
       )
     )->execute();
+}
+
+/**
+ * Implements hook_preprocess_links().
+ *
+ * @param $variables
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ */
+function message_thread_preprocess_links(&$variables) {
+
+  if ($variables['theme_hook_original'] == 'links__dropbutton__operations') {
+    $account = \Drupal::currentUser();
+
+    foreach ($variables['links'] as $key => $link) {
+      $route_name = $link['link']['#url']->getRouteName();
+      $route_parameters = $link['link']['#url']->getRouteParameters();
+
+      $entity_type = key($route_parameters);
+      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($route_parameters[$entity_type]);
+
+      if (!$entity) {
+        continue;
+      }
+      $operation = strtolower($link['link']['#title']->__toString());
+      if (substr($route_name, 0, 15) == 'entity.message.') {
+        $message_access_manager = new MessagePrivateAccessControlHandler($entity->getEntityType());
+        $access = $message_access_manager->checkAccess($entity, $operation, $account);
+
+        // Disable link if user does not have access
+        if ($access instanceof Drupal\Core\Access\AccessResultForbidden) {
+          unset ($variables['links'][$key]);
+        }
+       }
+    }
+  }
 }
 
 /**
@@ -176,6 +216,7 @@ function message_thread_entity_view_alter(array &$build, EntityInterface $entity
  * @return array|bool|null
  */
 function message_thread_get_messages_display($settings, $entity) {
+
   $view_name = $settings['view_id'];
   $display_id = $settings['view_display_id'];
   $view = Views::getView($view_name);
@@ -189,6 +230,7 @@ function message_thread_get_messages_display($settings, $entity) {
   $view->build($display_id);
   $view->preExecute();
   $view->execute($display_id);
+  $view->element['#attached']['library'][] = 'message_thread/thread-styles';
 
   if (!empty($view->result) || !empty($view->empty)) {
     return $view->buildRenderable($display_id);
@@ -196,7 +238,19 @@ function message_thread_get_messages_display($settings, $entity) {
   return FALSE;
 }
 
+/*
+ * Helper function to build the reply link
+ */
 function message_thread_reply_link($entity, $component) {
+  // Find out if any messages in this conversation
+  $query = \Drupal::database()->select('message_thread_index', 't');
+  $query->condition('t.thread_id', $entity->id());
+  $query->addExpression('COUNT(*)');
+  $count = $query->execute()->fetchField();
+  $label = t('Send a message');
+  if ($count > 0) {
+    $label = t('Reply');
+  }
   // Todo template should reference actual template
   $params = array(
     'message_template' => 'private_message',
@@ -211,7 +265,7 @@ function message_thread_reply_link($entity, $component) {
   return array(
     '#type' => 'link',
     '#url' => $url,
-    '#title' => t('Reply'),
+    '#title' => $label,
     '#weight' => $component['weight'],
     '#attributes' => array(
       'class' => array('message-thread-reply')
@@ -268,24 +322,6 @@ function message_thread_entity_base_field_info_alter(&$fields, EntityTypeInterfa
 }
 
 
-/**
- * Implements hook_message_thread_access_control().
- *
- * @param $params
- */
-function message_thread_message_thread_access_control($params) {
-  $entity = $params[0];
-  $operation = $params[1];
-  $account = $params[2];
-  // Get the participants
-  $participants = $entity->get('field_thread_participants')->getValue();
-  foreach ($participants as $participant) {
-    if ($participant['target_id'] == $account->id()) {
-      return AccessResult::allowed();
-    }
-  }
-}
-
 /*
  * Implements hook_local_tasks_alter().
  */
@@ -293,3 +329,23 @@ function message_thread_local_tasks_alter(&$local_tasks) {
   //We no longer need the private message local task on the user page
   unset($local_tasks['message_private.messages']);
 }
+
+/**
+ * Views Plugin access callback.
+ *
+ * @return \Drupal\Core\Access\AccessResult
+ */
+function message_thread_tab_access_check() {
+  $account = \Drupal::currentUser();
+  // Load the current node.
+  $uid = \Drupal::routeMatch()->getParameter('user');
+
+  // Check if the current user owns the inbox.
+  if (!empty($uid) && $account->id() == $uid) {
+    return AccessResult::allowed();
+  }
+
+  // Allow if the user has the bypass permission
+  return AccessResult::allowedIfHasPermission($account, 'bypass private message access control');
+}
+
