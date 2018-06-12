@@ -33,7 +33,7 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
     $breadcrumb = new Breadcrumb();
     $parameters = $route_match->getParameters()->all();
     $user = \Drupal::currentUser();
-    if (!empty($parameters['message_thread'])) {
+    if (!empty($parameters['message_thread']) && is_object($parameters['message_thread'])) {
       $message_thread = $parameters['message_thread'];
 
       // Get the parent messages link
@@ -57,7 +57,6 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
 
       $message = $parameters['message'];
       if ($message->bundle()) {
-
         $message_thread = $this->messageThreadRelationship($message->id());
         $thread_template = $message_thread->getTemplate();
 
@@ -71,7 +70,7 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
           $message_thread->get('field_thread_title')->getValue()[0]['value'],
           'entity.message_thread.canonical', [
             'message_thread' => $message_thread->id()
-            ]
+          ]
         ));
 // Probably don't need the current message
 //        $label = isset( $message->get('field_message_private_subject')->getValue()[0]['value'])
@@ -88,7 +87,11 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
 
     }
 
+    $contexts = [
+      'url'
+    ];
 
+    $breadcrumb->addCacheContexts($contexts);
     return $breadcrumb;
   }
 

@@ -46,7 +46,6 @@ function message_thread_help($route_name, RouteMatchInterface $arg) {
 function message_thread_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   // When a message is created we need to ensure that the participants are included
   // This is best done in the validation hook to ensure participants are not missed from submit functions
-
   $thread_templates = \Drupal::entityTypeManager()->getListBuilder('message_thread_template')->load();
   foreach ($thread_templates as $name => $template) {
     $settings = $template->getSettings();
@@ -113,8 +112,14 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
  *
  * @param $variables
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ *
+ * todo should use this hook: message_ui_message_ui_views_contextual_links_info
  */
 function message_thread_preprocess_links(&$variables) {
+
+  if (!message_thread_is_message_route()) {
+    return;
+  }
 
   if ($variables['theme_hook_original'] == 'links__dropbutton__operations') {
     $account = \Drupal::currentUser();
@@ -141,6 +146,21 @@ function message_thread_preprocess_links(&$variables) {
       }
     }
   }
+}
+
+/*
+ * Test if the current route is a message thread or message route
+ */
+function message_thread_is_message_route() {
+  $message = \Drupal::routeMatch()->getParameter('message');
+  if ($message) {
+    return TRUE;
+  }
+  $message_thread = \Drupal::routeMatch()->getParameter('message>_thread');
+  if ($message_thread) {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 /**

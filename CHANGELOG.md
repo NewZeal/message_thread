@@ -18,3 +18,8 @@ Modify contextual dropdowns for proper access
 
 8.x-1.0-alpha7
 Remove reference to MessagePrivateAccessControlHandler which doesn't exist yet
+
+8.x-1.0-alpha8
+Add route check on message_ui edit links
+Add cache context to breadcrumbs
+Add message history functionality
