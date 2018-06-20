@@ -18,7 +18,7 @@ use Drupal\user\Entity\User;
 use Drupal\Core\Access\AccessResult;
 use Drupal\message_thread\MessageThreadAccessControlHandler;
 use Drupal\message_private\MessagePrivateAccessControlHandler;
-
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_installed.
@@ -107,6 +107,21 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
     )->execute();
 }
 
+/*
+ * Implements hook_form_FORM_ID_alter().
+ */
+function message_thread_form_message_thread_conversation_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  $form['field_thread_participants']['widget']['add_more']['#value'] = new TranslatableMarkup('Add another user');
+  $form['owner']['#access'] = \Drupal::currentUser()->hasPermission('bypass private message access control');
+}
+
+/*
+ * Implements hook_form_FORM_ID_alter().
+ */
+function message_thread_form_message_thread_conversation_form_alter(array &$form, FormStateInterface $form_state) {
+  $form['field_thread_participants']['widget']['add_more']['#value'] = new TranslatableMarkup('Add another user');
+  $form['owner']['#access'] = \Drupal::currentUser()->hasPermission('bypass private message access control');
+}
 /**
  * Implements hook_preprocess_links().
  *
@@ -263,11 +278,9 @@ function message_thread_get_messages_display($settings, $entity) {
  */
 function message_thread_reply_link($entity, $component) {
   // Find out if any messages in this conversation
-  $query = \Drupal::database()->select('message_thread_index', 't');
-  $query->condition('t.thread_id', $entity->id());
-  $query->addExpression('COUNT(*)');
-  $count = $query->execute()->fetchField();
+
   $label = t('Send a message');
+  $count = message_thread_message_count($entity);
   if ($count > 0) {
     $label = t('Reply');
   }
@@ -293,6 +306,29 @@ function message_thread_reply_link($entity, $component) {
   );
 }
 
+
+/*
+ * Implements hook_ENTITY_TYPE_delete
+ */
+function message_thread_message_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  // Delete from index when deleting a private message
+  switch ($entity->getTemplate()->id()) {
+    case 'private_message':
+      drupal_set_message(t('Deleting index'));
+      db_delete('message_thread_index', ['mid' => $entity->id()]);
+      break;
+  }
+}
+
+/*
+ * Helper function to return number of messages attached to a thread
+ */
+function message_thread_message_count($entity) {
+  $query = \Drupal::database()->select('message_thread_index', 't');
+  $query->condition('t.thread_id', $entity->id());
+  $query->addExpression('COUNT(*)');
+  return $query->execute()->fetchField();
+}
 /*
  * Message submit callback
  * See Drupal\message_thread\Controller\MessageThreadController.php

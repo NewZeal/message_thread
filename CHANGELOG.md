@@ -23,3 +23,6 @@ Remove reference to MessagePrivateAccessControlHandler which doesn't exist yet
 Add route check on message_ui edit links
 Add cache context to breadcrumbs
 Add message history functionality
+
+8.x-1.0-alpha9
+Fix thread delete function
