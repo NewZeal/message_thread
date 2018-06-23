@@ -19,6 +19,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\message_thread\MessageThreadAccessControlHandler;
 use Drupal\message_private\MessagePrivateAccessControlHandler;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Utility\LinkGenerator;
 
 /**
  * Implements hook_installed.
@@ -110,9 +111,29 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
 /*
  * Implements hook_form_FORM_ID_alter().
  */
+function message_thread_form_message_private_message_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  // Redirect to the thread not the message
+  $mid = $form_state->getFormObject()->getEntity()->id();
+  $params = array(
+    'message_thread' => message_thread_relationship($mid)
+  );
+  $url = Url::fromRoute('entity.message_thread.canonical', $params);
+  $form_state->setRedirectUrl($url);
+  $link = [
+    '#type' => 'link',
+    '#url' => $url,
+    '#title' => t('Cancel')
+  ];
+  $form['actions']['cancel'] = $link;
+}
+
+/*
+ * Implements hook_form_FORM_ID_alter().
+ */
 function message_thread_form_message_thread_conversation_edit_form_alter(array &$form, FormStateInterface $form_state) {
   $form['field_thread_participants']['widget']['add_more']['#value'] = new TranslatableMarkup('Add another user');
   $form['owner']['#access'] = \Drupal::currentUser()->hasPermission('bypass private message access control');
+  $form['advanced']['#access'] = \Drupal::currentUser()->hasPermission('bypass private message access control');
 }
 
 /*
@@ -121,6 +142,7 @@ function message_thread_form_message_thread_conversation_edit_form_alter(array &
 function message_thread_form_message_thread_conversation_form_alter(array &$form, FormStateInterface $form_state) {
   $form['field_thread_participants']['widget']['add_more']['#value'] = new TranslatableMarkup('Add another user');
   $form['owner']['#access'] = \Drupal::currentUser()->hasPermission('bypass private message access control');
+  $form['advanced']['#access'] = \Drupal::currentUser()->hasPermission('bypass private message access control');
 }
 /**
  * Implements hook_preprocess_links().
@@ -291,7 +313,7 @@ function message_thread_reply_link($entity, $component) {
   );
   $options = [
     'query' => [
-      'destination' => '/message-thread/' . $entity->id()
+      'destination' => '/message/thread/' . $entity->id()
     ]
   ];
   $url = Url::fromRoute('message_thread.reply', $params, $options);
@@ -336,8 +358,6 @@ function message_thread_message_count($entity) {
 function message_thread_add_message_form_submit(&$form, FormStateInterface &$form_state) {
   $values = $form_state->getValues();
   return;
-
-
 }
 
 /**
@@ -405,3 +425,62 @@ function message_thread_tab_access_check() {
   return AccessResult::allowedIfHasPermission($account, 'bypass private message access control');
 }
 
+/*
+ * Helper function to relate a message to its thread
+ */
+function message_thread_relationship($mid) {
+  $thread_id = db_select('message_thread_index', 'mdi')
+    ->condition('mdi.mid', $mid)
+    ->fields('mdi', ['thread_id'])
+    ->execute()
+    ->fetchField();
+
+  return $thread_id;
+}
+
+
+/*
+ * Helper function to get all message ids in a thread
+ */
+function message_thread_get_messages($thread_id) {
+  $result = db_select('message_thread_index', 'mdi')
+    ->condition('mdi.thread_id', $thread_id)
+    ->fields('mdi', ['mid'])
+    ->execute()
+    ->fetchAll();
+
+  $messages = [];
+  foreach ($result as $record) {
+    $messages[] = $record->mid;
+  }
+  return $messages;
+}
+
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter() for message thread entities.
+ */
+function message_history_message_thread_view_alter(array &$build, EntityInterface $message_thread,
+                                                   EntityViewDisplayInterface
+$display) {
+
+  // Update the message_history table, stating that this user viewed all messages in this thread.
+  if (!\Drupal::service('module_handler')->moduleExists('message_history')) {
+    return;
+  }
+
+  if (!in_array($display->getOriginalMode(), ['default', 'full'])) {
+    return;
+  }
+
+  $build['#cache']['contexts'][] = 'user.roles:authenticated';
+  if (!\Drupal::currentUser()->isAuthenticated()) {
+    return;
+  }
+  //  Find all messages in this thread and mark them read
+  $messages = message_thread_get_messages($message_thread->id());
+  foreach ($messages as $mid) {
+    $build['#attached']['drupalSettings']['message_history']['itemsToMarkAsRead'][$mid] = TRUE;
+  }
+  $build['#attached']['library'][] = 'message_history/mark-as-read';
+}

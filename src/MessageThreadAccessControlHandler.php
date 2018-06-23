@@ -50,6 +50,9 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
       if (AccessResult::allowedIfHasPermission($account, 'view own messages')) {
         $participants = $entity->get('field_thread_participants')->getValue();
         foreach ($participants as $participant) {
+          if (!isset($participant['target_id'])) {
+            continue;
+          }
           $allow[] = $participant['target_id'];
         }
       }

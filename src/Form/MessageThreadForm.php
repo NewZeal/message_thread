@@ -148,8 +148,10 @@ class MessageThreadForm extends ContentEntityForm {
     }
     $element['save']['#weight'] = 0;
 
-    $mid = $message_thread->id();
-    $url = is_object($message_thread) && !empty($mid) ? Url::fromRoute('entity.message.canonical', ['message' => $mid]) : Url::fromRoute('message.overview_templates');
+    $link = new Url('entity.user.canonical', ['user' => $this->entity->get('uid')->getValue()[0]['target_id']]);
+    $url = is_object($message_thread) && $message_thread->id() != NULL
+      ? Url::fromRoute('entity.message_thread.canonical', ['message_thread' => $message_thread->id()])
+      : $link;
     $link = Link::fromTextAndUrl(t('Cancel'), $url)->toString();
 
     // Add a cancel link to the message form actions.

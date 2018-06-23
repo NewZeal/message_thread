@@ -1,9 +1,12 @@
+uuid: ad109b3f-5d82-44c3-b803-8a11a077b523
 langcode: en
 status: true
 dependencies:
   module:
     - message_thread
     - user
+_core:
+  default_config_hash: MC0s-7agSyiBQAjqJWOmRm490W1whtpovjURVdaQ4N8
 id: message_thread.field_thread_participants
 field_name: field_thread_participants
 entity_type: message_thread

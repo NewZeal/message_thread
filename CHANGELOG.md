@@ -26,3 +26,6 @@ Add message history functionality
 
 8.x-1.0-alpha9
 Fix thread delete function
+
+8.x-1.0-alpha10
+Make the threads control area tidier adding tabs and improving workflow

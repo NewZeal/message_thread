@@ -8,6 +8,7 @@ dependencies:
   module:
     - message_private
     - message_thread
+    - user
 _core:
   default_config_hash: UqAY1HdOAH7JtNrXnK5OGCxXSIJ6uZhbgRMT488UMSw
 id: conversations
@@ -236,20 +237,7 @@ display:
           plugin_id: bundle
       sorts: {  }
       title: Messages
-      header:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content:
-            value: '<a href="/message-thread/add/conversation">Start a new conversation</a>'
-            format: basic_html
-          plugin_id: text
+      header: {  }
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -297,6 +285,112 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
+      tags:
+        - 'config:field.storage.message_thread.field_thread_participants'
+        - 'config:field.storage.message_thread.field_thread_title'
+  block_1:
+    display_plugin: block
+    id: block_1
+    display_title: Inbox
+    position: 2
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
+      tags:
+        - 'config:field.storage.message_thread.field_thread_participants'
+        - 'config:field.storage.message_thread.field_thread_title'
+  block_2:
+    display_plugin: block
+    id: block_2
+    display_title: Sent
+    position: 3
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+      filters:
+        template:
+          id: template
+          table: message_thread_field_data
+          field: template
+          value:
+            conversation: conversation
+          entity_type: message_thread
+          entity_field: template
+          plugin_id: bundle
+        uid_current:
+          id: uid_current
+          table: users
+          field: uid_current
+          relationship: uid
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: user
+          plugin_id: user_current
+      defaults:
+        filters: false
+        filter_groups: false
+        relationships: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      relationships:
+        uid:
+          id: uid
+          table: message_thread_field_data
+          field: uid
+          relationship: none
+          group_type: group
+          admin_label: User
+          required: true
+          entity_type: message_thread
+          entity_field: uid
+          plugin_id: standard
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
         - user.permissions
       tags:
         - 'config:field.storage.message_thread.field_thread_participants'

@@ -58,13 +58,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-
-//    $this->derivatives['message_thread.edit'] = $base_plugin_definition;
-//    $this->derivatives['message_thread.edit']['title'] = t('Edit');
-//    $this->derivatives['message_thread.edit']['route_name'] = 'entity.message_thread.edit_form';
-//    $this->derivatives['message_thread.edit']['base_route'] = 'entity.message_thread.canonical';
-//    $this->derivatives['message_thread.edit']['weight'] = 0;
-//
+    
     // Create tabs for each message thread type
     $thread_templates = $this->entityTypeManager->getListBuilder('message_thread_template')->load();
     foreach ($thread_templates as $name => $template) {
@@ -87,15 +81,6 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
       $this->derivatives['message_thread.' . $name . '.user']['route_name'] = 'message_thread.' . $name;
       $this->derivatives['message_thread.' . $name . '.user']['base_route'] = 'entity.user.canonical';
       $this->derivatives['message_thread.' . $name . '.user']['weight'] = 100;
-
-//      $this->derivatives['message_thread.' . $name . '.message_thread'] = $base_plugin_definition;
-//      $this->derivatives['message_thread.' . $name . '.message_thread']['title'] = $template->label();
-//      $this->derivatives['message_thread.' . $name . '.message_thread']['route_name'] = 'message_thread.' . $name;
-//      $this->derivatives['message_thread.' . $name . '.message_thread']['route_parameters']['message_thread'] = '{message_thread}';
-//      $this->derivatives['message_thread.' . $name . '.message_thread']['base_route'] = 'entity.message_thread.canonical';
-//      $this->derivatives['message_thread.' . $name . '.message_thread']['weight'] = 100;
-
-
 
     }
 

@@ -57,7 +57,8 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
 
       $message = $parameters['message'];
       if ($message->bundle()) {
-        $message_thread = $this->messageThreadRelationship($message->id());
+        $thread_id = message_thread_relationship($message->id());
+        $message_thread = MessageThread::load($thread_id);
         $thread_template = $message_thread->getTemplate();
 
         $breadcrumb->addLink(Link::createFromRoute(
@@ -95,16 +96,4 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
     return $breadcrumb;
   }
 
-  /*
-   * Helper function to relate a message to its thread
-   */
-  function messageThreadRelationship($mid) {
-    $thread_id = db_select('message_thread_index', 'mdi')
-      ->condition('mdi.mid', $mid)
-      ->fields('mdi', ['thread_id'])
-      ->execute()
-      ->fetchField();
-
-    return MessageThread::load($thread_id);
-  }
 }

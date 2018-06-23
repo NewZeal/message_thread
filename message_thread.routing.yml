@@ -17,7 +17,7 @@ message_thread.overview_templates:
 
 
 #message_thread.thread_add:
-#  path: '/message-thread/add'
+#  path: '/message/thread/add'
 #  defaults:
 #    _entity_form: 'message_thread.add'
 #    _title: 'Add message thread'
@@ -49,7 +49,7 @@ entity.message_thread_template.delete_form:
     _permission: 'administer message templates'
 
 message_thread.add_page:
-  path: '/message-thread/add'
+  path: '/message/thread/add'
   defaults:
     _title: 'Add Message Thread'
     _controller: '\Drupal\message_thread\Controller\MessageThreadController::addPage'
@@ -58,7 +58,7 @@ message_thread.add_page:
      _entity_create_access: 'message_thread'
 
 message_thread.add:
-  path: '/message-thread/add/{message_thread_template}'
+  path: '/message/thread/add/{message_thread_template}'
   defaults:
   # Calls the form.add controller, defined in the message entity alter hook.
     _controller: '\Drupal\message_thread\Controller\MessageThreadController::add'
@@ -71,7 +71,7 @@ message_thread.add:
         with_config_overrides: FALSE
 
 entity.message_thread.edit_form:
-  path: '/message-thread/{message_thread}/edit'
+  path: '/message/thread/{message_thread}/edit'
   defaults:
   # Calls the form.edit controller, defined in the message entity alter hook.
     _entity_form: message_thread.edit
@@ -80,7 +80,7 @@ entity.message_thread.edit_form:
     _entity_access: 'message_thread.edit'
 
 entity.message_thread.delete_form:
-  path: '/message-thread/{message_thread}/delete'
+  path: '/message/thread/{message_thread}/delete'
   defaults:
     # Calls the form.delete controller, defined in the message entity alter hook.
     _entity_form: message_thread.delete
@@ -89,7 +89,7 @@ entity.message_thread.delete_form:
     _entity_access: 'message_thread.delete'
 
 message_thread.threads:
-  path: '/user/{user}/threads'
+  path: '/message/threads'
   defaults:
     _controller: '\Drupal\message_thread\Controller\MessageThreadController::inbox'
     _title: 'Message Threads'
@@ -98,7 +98,7 @@ message_thread.threads:
     _permission: 'overview message threads'
 
 message_thread.threads.inbox:
-  path: '/user/{user}/threads/inbox'
+  path: '/message/threads/inbox'
   defaults:
     _controller: '\Drupal\message_thread\Controller\MessageThreadController::inbox'
     _title: 'Inbox'
@@ -107,16 +107,16 @@ message_thread.threads.inbox:
     _permission: 'overview message threads'
 
 message_thread.threads.sent:
-  path: '/user/{user}/threads/sent'
+  path: '/message/threads/sent'
   defaults:
     _controller: '\Drupal\message_thread\Controller\MessageThreadController::sent'
     _title: 'Sent'
   description: 'Message Thread Sent'
   requirements:
-    _permission: 'overview messages'
+    _permission: 'overview message threads'
 
 #entity.message_thread.canonical:
-#  path: '/message-thread/{message_thread}'
+#  path: '/message/thread/{message_thread}'
 #  defaults:
 #  # Calls the view controller, defined the message entity alter hook.
 #    _entity_view: 'message_thread'
@@ -136,14 +136,6 @@ message_thread.reply:
     parameters:
       message_template:
         with_config_overrides: FALSE
-
-# The default View that comes with this module
-#message_thread.conversations:
-#  path: '/user/{user}/conversations'
-#  defaults:
-#    _controller: '\Drupal\message_thread\Controller\MessageThreadController::inBox'
-#  requirements:
-#    _custom_access: '_message_thread_tab_access_check'
 
 route_callbacks:
   - 'Drupal\message_thread\Routing\MessageThreadRoutes::routes'

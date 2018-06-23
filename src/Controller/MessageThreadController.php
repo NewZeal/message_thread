@@ -10,6 +10,7 @@ use Drupal\message_thread\MessageThreadTemplateInterface;
 use Drupal\message_thread\MessageThreadInterface;
 use Drupal\message\Entity\Message;
 use Drupal\Component\Utility\Xss;
+use Drupal\views\Views;
 
 /**
  * Controller for adding messages.
@@ -49,7 +50,6 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
    */
   public function addPage() {
     $content = [];
-//dpm('here we are');
     // Only use message templates the user has access to.
     foreach ($this->entityManager()->getStorage('message_thread_template')->loadMultiple() as $template) {
       $access = $this->entityManager()
@@ -144,17 +144,58 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
    * @return
    *   A render array for a list of the messages;
    */
-  public function inBox($user) {
-    $message_threads = array();
-
+  public function inBox() {
     // Get threads that the current user belongs to
+    $view_name = 'conversations';
+    $display_id = 'block_1';
+    $argument = \Drupal::currentUser()->id();
+    $view = Views::getView($view_name);
+    // Someone may have deleted the View.
+    if (!is_object($view)) {
+      return array(
+        '#markup' => t('The View for message thread inbox has been deleted.')
+      );
+    }
+    // No access.
+    if (!$view->access($display_id)) {
+      return array(
+        '#markup' => t('You do not have access to this resource.')
+      );
+    }
+
+    $view->setDisplay($display_id);
+
+    if ($argument) {
+      $arguments = [$argument];
+      if (preg_match('/\//', $argument)) {
+        $arguments = explode('/', $argument);
+      }
+      $view->setArguments($arguments);
+    }
+
+    $view->preExecute();
+    $view->execute($display_id);
+
+//    if ($title) {
+//      $title = $view->getTitle();
+//      $title_render_array = [
+//        '#theme' => $view->buildThemeFunctions('viewsreference__view_title'),
+//        '#title' => $title,
+//        '#view' => $view,
+//      ];
+//    }
+
+//    if ($this->getSetting('plugin_types')) {
+//      if ($title) {
+//        $elements[$delta]['title'] = $title_render_array;
+//      }
+//    }
+
+    $message_threads = $view->buildRenderable($display_id);
 
     // Return build array.
-    if (!empty($messages)) {
-      return array(
-        '#theme' => 'message_thread__inbox',
-        '#messages' => $message_threads
-      );
+    if (!empty($message_threads)) {
+      return $message_threads;
     }
     else {
       $url = Url::fromRoute('message.template_add');
@@ -181,13 +222,57 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
    * @return array
    *   An array as expected by drupal_render().
    */
-  public function sent($user) {
-    // Return build array.
-    if (!empty($messages)) {
+  public function sent() {
+    $view_name = 'conversations';
+    $display_id = 'block_2';
+    $argument = \Drupal::currentUser()->id();
+    $view = Views::getView($view_name);
+    // Someone may have deleted the View.
+    if (!is_object($view)) {
       return array(
-        '#theme' => 'message_private__inbox',
-        '#messages' => $messages
+        '#markup' => t('The View for message thread sent has been deleted.')
       );
+    }
+    // No access.
+    if (!$view->access($display_id)) {
+      return array(
+        '#markup' => t('You do not have access to this resource.')
+      );
+    }
+
+    $view->setDisplay($display_id);
+
+    if ($argument) {
+      $arguments = [$argument];
+      if (preg_match('/\//', $argument)) {
+        $arguments = explode('/', $argument);
+      }
+      $view->setArguments($arguments);
+    }
+
+    $view->preExecute();
+    $view->execute($display_id);
+
+//    if ($title) {
+//      $title = $view->getTitle();
+//      $title_render_array = [
+//        '#theme' => $view->buildThemeFunctions('viewsreference__view_title'),
+//        '#title' => $title,
+//        '#view' => $view,
+//      ];
+//    }
+
+//    if ($this->getSetting('plugin_types')) {
+//      if ($title) {
+//        $elements[$delta]['title'] = $title_render_array;
+//      }
+//    }
+
+    $message_threads = $view->buildRenderable($display_id);
+
+    // Return build array.
+    if (!empty($message_threads)) {
+      return $message_threads;
     }
     else {
       $url = Url::fromRoute('message.template_add');
