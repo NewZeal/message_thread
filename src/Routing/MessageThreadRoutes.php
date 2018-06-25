@@ -98,7 +98,7 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
       $route_collection->add('message_thread.' . $name, $route);
     }
 
-    $route = (new Route('/message-thread/{message_thread}'))
+    $route = (new Route('/message/thread/{message_thread}'))
       ->setDefaults([
         '_entity_view' => 'message_thread.full',
         '_title_callback' => 'Drupal\message_thread\Controller\MessageThreadController::messageThreadTitle',

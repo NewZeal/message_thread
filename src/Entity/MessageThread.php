@@ -48,9 +48,9 @@ use Drupal\user\UserInterface;
  *     "access" = "Drupal\message_thread\MessageThreadAccessControlHandler",
  *   },
  *   links = {
- *     "canonical" = "/message-thread/{message_thread}",
- *     "edit-form" = "/message-thread/{message_thread}/edit",
- *     "delete-form" = "/message-thread/{message_thread}/delete"
+ *     "canonical" = "/message/thread/{message_thread}",
+ *     "edit-form" = "/message/thread/{message_thread}/edit",
+ *     "delete-form" = "/message/thread/{message_thread}/delete"
  *   },
  *   field_ui_base_route = "entity.message_thread_template.edit_form"
  * )

@@ -127,6 +127,32 @@ function message_thread_form_message_private_message_edit_form_alter(array &$for
   $form['actions']['cancel'] = $link;
 }
 
+function message_thread_form_message_private_message_form_alter(array &$form, FormStateInterface $form_state) {
+  // Get the message thread id from the url
+  if (isset($_GET['destination'])) {
+    $parts = explode('/', $_GET['destination']);
+    $thread_id = array_pop($parts);
+    if (is_numeric($thread_id)) {
+      $params = array(
+        'message_thread' => $thread_id
+      );
+      $url = Url::fromRoute('entity.message_thread.canonical', $params);
+      $form_state->setRedirectUrl($url);
+      $link = [
+        '#type' => 'link',
+        '#url' => $url,
+        '#title' => t('Cancel')
+      ];
+      $form['actions']['cancel'] = $link;
+    }
+
+  }
+
+}
+
+
+
+
 /*
  * Implements hook_form_FORM_ID_alter().
  */
