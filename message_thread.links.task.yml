@@ -9,11 +9,6 @@ task.message_thread.threads.sent:
   base_route: message_thread.threads
   title: Sent
 
-task.message_thread.threads:
-  route_name: message_thread.threads
-  base_route: message_thread.threads
-  title: Inbox
-
 task.message_thread.add:
   route_name: message_thread.add_page
   base_route: message_thread.threads
@@ -35,5 +30,5 @@ task.message_thread.delete_form:
   title: Delete
 
 ## Provide dynamic local tasks.
-message_thread.dynamic_tasks:
-  deriver: 'Drupal\message_thread\Plugin\Derivative\DynamicLocalTasks'
+#message_thread.dynamic_tasks:
+#  deriver: 'Drupal\message_thread\Plugin\Derivative\DynamicLocalTasks'

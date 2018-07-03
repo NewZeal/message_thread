@@ -68,6 +68,7 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
     $thread_templates = $this->entityTypeManager->getListBuilder('message_thread_template')->load();
 
     foreach ($thread_templates as $name => $template) {
+
       $settings = $template->getSettings();
 
       // This is being called before the view route is being registered when the module is first installed
@@ -92,10 +93,10 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
           '_title' => $template->label(),
         ],
         [
-          '_permission' => 'create and receive ' . $template->id()
+          '_permission' => 'create and receive ' . $template->id() . ' message threads'
         ]
       );
-      $route_collection->add('message_thread.' . $name, $route);
+      $route_collection->add('message_thread.' . $template->id(), $route);
     }
 
     $route = (new Route('/message/thread/{message_thread}'))
@@ -105,6 +106,7 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
       ])
       ->setRequirement('message_thread', '\d+')
       ->setRequirement('_entity_access', 'message_thread.view');
+
     $route_collection->add('entity.message_thread.canonical', $route);
 
     return $route_collection;

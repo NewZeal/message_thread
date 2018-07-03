@@ -10,7 +10,7 @@ dependencies:
     - message_ui
     - user
 _core:
-  default_config_hash: 2Up5NUvwF4aBVoO6eFTPeBXtnpUw_yiexv9I5u6ZD-g
+  default_config_hash: DOOWzqkXI77o2Q96QVFt65R_TVHiRqAJrWPp7JfWA0I
 id: message_thread_messages
 label: 'Message Thread Messages'
 module: views
@@ -29,7 +29,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'create and receive conversation'
+          perm: 'create and receive conversation message threads'
       cache:
         type: none
         options: {  }

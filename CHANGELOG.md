@@ -29,3 +29,9 @@ Fix thread delete function
 
 8.x-1.0-alpha10
 Make the threads control area tidier adding tabs and improving workflow
+
+8.x-1.0-alpha11
+Fix thread urls and redirects
+
+8.x-1.0-alpha12
+Refine tabs and access rules

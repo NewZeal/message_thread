@@ -5,9 +5,6 @@ template: conversation
 label: Messages
 description: 'Message thread to accompany Private Messages'
 message_template: private_message
-view_display: null
-view_display_id: null
-text: {  }
 settings:
   message_template: private_message
   view_id: private_messages

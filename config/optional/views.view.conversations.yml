@@ -6,11 +6,10 @@ dependencies:
     - field.storage.message_thread.field_thread_title
     - message_thread.template.conversation
   module:
-    - message_private
     - message_thread
     - user
 _core:
-  default_config_hash: UqAY1HdOAH7JtNrXnK5OGCxXSIJ6uZhbgRMT488UMSw
+  default_config_hash: aRS7Mqf_xk1HwqOeqK7NTPslQUTaNXpSD4tzeCF2mKw
 id: conversations
 label: Messages
 module: views
@@ -27,8 +26,9 @@ display:
     position: 0
     display_options:
       access:
-        type: message_private
-        options: {  }
+        type: perm
+        options:
+          perm: 'create and receive conversation message threads'
       cache:
         type: tag
         options: {  }
@@ -402,9 +402,9 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: user/%/conversations
+      path: user/%user/conversations
       menu:
-        type: 'default tab'
+        type: tab
         title: Messages
         description: ''
         expanded: false
@@ -417,6 +417,22 @@ display:
         title: ''
         description: ''
         weight: 0
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<a href="/message/thread/add/conversation">Start a new conversation</a>'
+            format: basic_html
+          plugin_id: text
+      defaults:
+        empty: false
     cache_metadata:
       max-age: -1
       contexts:
