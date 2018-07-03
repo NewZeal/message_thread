@@ -1,11 +1,3 @@
-message_thread.overview_threads:
-  path: '/admin/content/message-threads'
-  defaults:
-    _title: 'Message Threads'
-    _entity_list: 'message_thread'
-  requirements:
-    _permission: 'overview message threads'
-
 message_thread.overview_templates:
   path: '/admin/structure/message-threads'
   defaults:
@@ -13,7 +5,7 @@ message_thread.overview_templates:
     entity_type: 'message_thread_template'
     _title: 'Message thread templates'
   requirements:
-    _permission: 'administer message private'
+    _permission: 'administer message thread templates'
 
 
 #message_thread.thread_add:
@@ -25,28 +17,28 @@ message_thread.overview_templates:
 #    _permission: 'administer message templates'
 
 message_thread.template_add:
-  path: '/admin/structure/message-threads/template/add'
+  path: '/admin/structure/message-thread/template/add'
   defaults:
     _entity_form: 'message_thread_template.add'
     _title: 'Add message thread template'
   requirements:
-    _permission: 'administer message templates'
+    _permission: 'administer message thread templates'
 
 entity.message_thread_template.edit_form:
-  path: '/admin/structure/message-threads/manage/{message_thread_template}'
+  path: '/admin/structure/message-thread/manage/{message_thread_template}'
   defaults:
     _entity_form: 'message_thread_template.edit'
     _title: 'Edit message thread template'
   requirements:
-    _permission: 'administer message templates'
+    _permission: 'administer message thread templates'
 
 entity.message_thread_template.delete_form:
-  path: '/admin/structure/message-threads/delete/{message_thread_template}'
+  path: '/admin/structure/message-thread/delete/{message_thread_template}'
   defaults:
     _entity_form: 'message_thread_template.delete'
     _title: 'Delete message thread template'
   requirements:
-    _permission: 'administer message templates'
+    _permission: 'administer message thread templates'
 
 message_thread.add_page:
   path: '/message/thread/add'

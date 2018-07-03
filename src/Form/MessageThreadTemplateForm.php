@@ -227,25 +227,22 @@ class MessageThreadTemplateForm extends EntityForm {
     ];
 
 
-
-
 //    $multiple = new MessageTemplateMultipleTextField($this->entity, [get_class($this), 'addMoreAjax']);
 //    $multiple->textField($form, $form_state);
 
+    $form['settings']['token options']['clear'] = [
+      '#title' => $this->t('Clear empty tokens'),
+      '#type' => 'checkbox',
+      '#description' => $this->t('When this option is selected, empty tokens will be removed from display.'),
+      '#default_value' => isset($settings['token options']['clear']) ? $settings['token options']['clear'] : FALSE,
+    ];
 
-//    $form['settings']['token options']['clear'] = [
-//      '#title' => $this->t('Clear empty tokens'),
-//      '#type' => 'checkbox',
-//      '#description' => $this->t('When this option is selected, empty tokens will be removed from display.'),
-//      '#default_value' => isset($settings['token options']['clear']) ? $settings['token options']['clear'] : FALSE,
-//    ];
-//
-//    $form['settings']['token options']['token replace'] = array(
-//      '#type' => 'checkbox',
-//      '#title' => $this->t('Token replace'),
-//      '#description' => $this->t('When this option is selected, token processing will happen.'),
-//      '#default_value' => !isset($settings['token options']['token replace']) || !empty($settings['token options']['token replace']),
-//    );
+    $form['settings']['token options']['token replace'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Token replace'),
+      '#description' => $this->t('When this option is selected, token processing will happen.'),
+      '#default_value' => !isset($settings['token options']['token replace']) || !empty($settings['token options']['token replace']),
+    );
 
 //    $form['settings']['purge_override'] = [
 //      '#title' => $this->t('Override global purge settings'),
@@ -336,8 +333,8 @@ class MessageThreadTemplateForm extends EntityForm {
    */
   protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);
-    $actions['submit']['#value'] = t('Save message thread template ');
-    $actions['delete']['#value'] = t('Delete message thread template ');
+    $actions['submit']['#value'] = t('Save message thread template');
+    $actions['delete']['#value'] = t('Delete message thread template');
     return $actions;
   }
 
@@ -372,17 +369,6 @@ class MessageThreadTemplateForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    // Sort by weight.
-//    $text = $form_state->getValue('text');
-//    usort($text, function ($a, $b) {
-//      return SortArray::sortByKeyInt($a, $b, '_weight');
-//    });
-//    // Do not store weight, as these are now sorted.
-//    $text = array_map(function ($a) {
-//      unset($a['_weight']);
-//      return $a;
-//    }, $text);
-//    $this->entity->set('text', $text);
 
     parent::save($form, $form_state);
 
@@ -390,7 +376,7 @@ class MessageThreadTemplateForm extends EntityForm {
       '@template' => $form_state->getValue('label'),
     ];
 
-    drupal_set_message(t('The message thread template  @template created successfully.', $params));
+    drupal_set_message(t('The message thread template @template created successfully.', $params));
     $form_state->setRedirect('message_thread.overview_templates');
     return $this->entity;
   }

@@ -87,22 +87,6 @@ interface MessageThreadTemplateInterface extends ConfigEntityInterface {
   public function getUuid();
 
   /**
-   * Retrieves the configured message text in a certain language.
-   *
-   * @param string $langcode
-   *   The language code of the Message text field, the text should be
-   *   extracted from.
-   * @param int $delta
-   *   Optional; Represents the partial number. If not provided - all partials
-   *   will be returned.
-   *
-   * @return array
-   *   An array of the text field values. These will have been processed for
-   *   their corresponding text formats.
-   */
-  public function getText($langcode = Language::LANGCODE_NOT_SPECIFIED, $delta = NULL);
-
-  /**
    * Set additional settings for the message template.
    */
   public function setSettings(array $settings);

@@ -24,16 +24,6 @@ class MessageThreadForm extends ContentEntityForm {
     /** @var \Drupal\message\Entity\Message $message */
     $message_thread = $this->entity;
 
-    $template = \Drupal::entityTypeManager()->getStorage('message_thread_template')->load($this->entity->bundle());
-
-    if ($this->config('message_thread.settings')->get('show_preview')) {
-      $form['text'] = [
-        '#type' => 'item',
-        '#title' => t('Message template'),
-        '#markup' => implode("\n", $template->getText()),
-      ];
-    }
-
     // Create the advanced vertical tabs "group".
     $form['advanced'] = [
       '#type' => 'details',

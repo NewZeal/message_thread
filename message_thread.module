@@ -45,6 +45,9 @@ function message_thread_help($route_name, RouteMatchInterface $arg) {
  * Implements hook_form_alter().
  */
 function message_thread_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if (substr($form_id,0, 8) != 'message_' ) {
+    return;
+  }
   // When a message is created we need to ensure that the participants are included
   // This is best done in the validation hook to ensure participants are not missed from submit functions
   $thread_templates = \Drupal::entityTypeManager()->getListBuilder('message_thread_template')->load();
@@ -488,7 +491,7 @@ function message_thread_get_messages($thread_id) {
  */
 function message_history_message_thread_view_alter(array &$build, EntityInterface $message_thread,
                                                    EntityViewDisplayInterface
-$display) {
+                                                   $display) {
 
   // Update the message_history table, stating that this user viewed all messages in this thread.
   if (!\Drupal::service('module_handler')->moduleExists('message_history')) {
@@ -509,4 +512,23 @@ $display) {
     $build['#attached']['drupalSettings']['message_history']['itemsToMarkAsRead'][$mid] = TRUE;
   }
   $build['#attached']['library'][] = 'message_history/mark-as-read';
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function message_thread_theme_suggestions_message_thread(array $variables) {
+  $suggestions = [];
+
+  /** @var \Drupal\message\MessageInterface $message */
+  $message_thread = $variables['elements']['#message_thread'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'message_thread__' . $sanitized_view_mode;
+  $suggestions[] = 'message_thread__' . $message_thread->bundle();
+  $suggestions[] = 'message_thread__' . $message_thread->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'message_thread__' . $message_thread->id();
+  $suggestions[] = 'message_thread__' . $message_thread->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
 }

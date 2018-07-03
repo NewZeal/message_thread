@@ -4,7 +4,6 @@ dependencies: {  }
 template: conversation
 label: Messages
 description: 'Message thread to accompany Private Messages'
-message_template: private_message
 settings:
   message_template: private_message
   view_id: private_messages

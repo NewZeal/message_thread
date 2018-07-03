@@ -35,3 +35,9 @@ Fix thread urls and redirects
 
 8.x-1.0-alpha12
 Refine tabs and access rules
+
+8.x-1.0-beta1
+Add tests along with corrections to scripts
+
+TodDo
+Delete messages in thread when thread is deleted

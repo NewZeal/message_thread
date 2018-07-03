@@ -95,20 +95,6 @@ interface MessageThreadInterface extends ContentEntityInterface, EntityOwnerInte
   public function setLanguage($language);
 
   /**
-   * Replace arguments with their placeholders.
-   *
-   * @param string $langcode
-   *   The language code.
-   * @param null|int $delta
-   *   The delta of the message to return. If NULL all the message text will be
-   *   returned.
-   *
-   * @return array
-   *   The message text.
-   */
-  public function getText($langcode = Language::LANGCODE_NOT_SPECIFIED, $delta = NULL);
-
-  /**
    * Delete multiple message.
    *
    * @param array $ids

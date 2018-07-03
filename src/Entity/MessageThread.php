@@ -204,31 +204,6 @@ class MessageThread extends ContentEntityBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getText($langcode = Language::LANGCODE_NOT_SPECIFIED, $delta = NULL) {
-    if (!$message_thread = $this->getTemplate()) {
-      // Message thread does not exist any more.
-      // We don't throw an exception, to make sure we don't break sites that
-      // removed the message thread, so we silently ignore.
-      return [];
-    }
-
-    $message_arguments = $this->getArguments();
-    $message_thread_text = $message_thread->getText($langcode, $delta);
-
-    $output = $this->processArguments($message_arguments, $message_thread_text);
-
-    $token_options = $message_thread->getSetting('token options', []);
-    if (!empty($token_options['token replace'])) {
-      // Token should be processed.
-      $output = $this->processTokens($output, !empty($token_options['clear']));
-    }
-
-    return $output;
-  }
-
-  /**
    * Process the message given the arguments saved with it.
    *
    * @param array $arguments
@@ -254,7 +229,7 @@ class MessageThread extends ContentEntityBase {
 
         if ($value['pass message']) {
           // Pass the message object as-well.
-          $value['arguments']['message'] = $this;
+          $value['arguments']['message_thread'] = $this;
         }
 
         $arguments[$key] = call_user_func_array($value['callback'], $value['arguments']);
@@ -288,7 +263,7 @@ class MessageThread extends ContentEntityBase {
 
     foreach ($output as $key => $value) {
       $output[$key] = \Drupal::token()
-        ->replace($value, ['message' => $this], $options);
+        ->replace($value, ['message_thread' => $this], $options);
     }
 
     return $output;
@@ -305,20 +280,6 @@ class MessageThread extends ContentEntityBase {
     // Require a valid template when saving.
     if (!$this->getTemplate()) {
       throw new MessageException('No valid template found.');
-    }
-
-    // Handle hard coded arguments.
-    foreach ($this->getTemplate()->getText() as $text) {
-      preg_match_all('/[@|%|\!]\{([a-z0-9:_\-]+?)\}/i', $text, $matches);
-
-      foreach ($matches[1] as $delta => $token) {
-        $output = \Drupal::token()->replace('[' . $token . ']', ['message' => $this], $token_options);
-        if ($output != '[' . $token . ']') {
-          // Token was replaced and token sanitizes.
-          $argument = $matches[0][$delta];
-          $tokens[$argument] = Markup::create($output);
-        }
-      }
     }
 
     $arguments = $this->getArguments();
@@ -361,7 +322,7 @@ class MessageThread extends ContentEntityBase {
    * {@inheritdoc}
    */
   public static function deleteMultiple(array $ids) {
-    \Drupal::entityTypeManager()->getStorage('message')->delete($ids);
+    \Drupal::entityTypeManager()->getStorage('message_thread')->delete($ids);
   }
 
   /**
@@ -376,9 +337,6 @@ class MessageThread extends ContentEntityBase {
   /**
    * {@inheritdoc}
    */
-  public function __toString() {
-    return trim(implode("\n", $this->getText()));
-  }
 
   /**
    * {@inheritdoc}
