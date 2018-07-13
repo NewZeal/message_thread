@@ -43,7 +43,6 @@ function message_thread_token_info() {
     'name' => t("Author"),
     'type' => 'user',
   ];
-dpm('tokens');
   return [
     'types' => ['message_thread' => $type],
     'tokens' => ['message_thread' => $message_thread],

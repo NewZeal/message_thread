@@ -39,5 +39,8 @@ Refine tabs and access rules
 8.x-1.0-beta1
 Add tests along with corrections to scripts
 
+8.x-1.0-beta2
+Remove dpm() in hook_token_info()
+
 TodDo
 Delete messages in thread when thread is deleted
