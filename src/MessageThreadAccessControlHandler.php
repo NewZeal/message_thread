@@ -60,27 +60,31 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     // Allow author of thread to edit and delete
     if ($entity->get('uid')->getValue() != NULL) {
       switch ($operation) {
+
         case 'view':
-          if (AccessResult::allowedIfHasPermission($account, 'view own messages')) {
+          $access_result = AccessResult::allowedIfHasPermission($account, 'view own private messages');
+          if ($access_result instanceof AccessResultAllowed) {
             $allow[] = $entity->get('uid')->getValue()[0]['target_id'];
           }
           break;
 
         case 'edit':
-          if (AccessResult::allowedIfHasPermission($account, 'edit own messages')) {
+          $access_result = AccessResult::allowedIfHasPermission($account, 'edit own private messages');
+          if ($access_result instanceof AccessResultAllowed) {
             $allow[] = $entity->get('uid')->getValue()[0]['target_id'];
           }
           break;
 
         case 'delete':
-          if (AccessResult::allowedIfHasPermission($account, 'delete own messages')) {
+          $access_result = AccessResult::allowedIfHasPermission($account, 'delete own private messages');
+          if ($access_result instanceof AccessResultAllowed) {
             $allow[] = $entity->get('uid')->getValue()[0]['target_id'];
           }
           break;
 
       }
-
     }
+
     if (in_array($current_id, $allow)) {
       return AccessResult::allowed();
     }
