@@ -42,5 +42,12 @@ Add tests along with corrections to scripts
 8.x-1.0-beta2
 Remove dpm() in hook_token_info()
 
+8.x-1.0-beta3
+Fix access control handler: https://www.drupal.org/project/message_thread/issues/2988298
+Improve conversation view to properly filter threads
+Fix form error: https://www.drupal.org/project/message_thread/issues/2988297
+Breadcrumb error: https://www.drupal.org/project/message_thread/issues/2986743
+
+
 TodDo
 Delete messages in thread when thread is deleted
