@@ -117,17 +117,19 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
 function message_thread_form_message_private_message_edit_form_alter(array &$form, FormStateInterface $form_state) {
   // Redirect to the thread not the message
   $mid = $form_state->getFormObject()->getEntity()->id();
-  $params = array(
-    'message_thread' => message_thread_relationship($mid)
-  );
-  $url = Url::fromRoute('entity.message_thread.canonical', $params);
-  $form_state->setRedirectUrl($url);
-  $link = [
-    '#type' => 'link',
-    '#url' => $url,
-    '#title' => t('Cancel')
-  ];
-  $form['actions']['cancel'] = $link;
+  if (message_thread_relationship($mid)) {
+    $params = array(
+      'message_thread' => message_thread_relationship($mid)
+    );
+    $url = Url::fromRoute('entity.message_thread.canonical', $params);
+    $form_state->setRedirectUrl($url);
+    $link = [
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => t('Cancel')
+    ];
+    $form['actions']['cancel'] = $link;
+  }
 }
 
 function message_thread_form_message_private_message_form_alter(array &$form, FormStateInterface $form_state) {

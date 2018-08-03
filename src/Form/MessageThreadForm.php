@@ -252,7 +252,7 @@ class MessageThreadForm extends ContentEntityForm {
     // Set up message link and status message contexts.
     $message_thread_link = $message_thread->link($this->t('View'));
     $context = [
-      '@type' => $message_thread->getTemplate(),
+      '@type' => $message_thread->getTemplate()->id(),
       '%title' => 'Message:' . $message_thread->id(),
       'link' => $message_thread_link,
     ];
