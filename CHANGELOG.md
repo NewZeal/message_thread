@@ -48,6 +48,8 @@ Improve conversation view to properly filter threads
 Fix form error: https://www.drupal.org/project/message_thread/issues/2988297
 Breadcrumb error: https://www.drupal.org/project/message_thread/issues/2986743
 
+8.x-1.0-beta4
+Add reply form to display
 
 TodDo
 Delete messages in thread when thread is deleted
