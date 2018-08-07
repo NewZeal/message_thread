@@ -20,6 +20,7 @@ use Drupal\message_thread\MessageThreadAccessControlHandler;
 use Drupal\message_private\MessagePrivateAccessControlHandler;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Utility\LinkGenerator;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_installed.
@@ -61,11 +62,17 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
       $owner = $form['uid']['widget'][0]['target_id']['#default_value'];
 
       if ($parameters->has('message_thread')) {
+        if (is_object($parameters->get('message_thread'))) {
+          $id = $parameters->get('message_thread')->id();
+        }
+        else {
+          $id = $parameters->get('message_thread');
+        }
         $form['message_thread'] = [
           '#type' => 'hidden',
-          '#value' => $parameters->get('message_thread')
+          '#value' => $id
         ];
-        $message_thread = MessageThread::load( $parameters->get('message_thread'));
+        $message_thread = MessageThread::load( $id);
         $participants = $message_thread->get('field_thread_participants')->getValue();
         $widget_base = $form['field_message_private_to_user']['widget'][0];
         foreach ($participants as $key => $participant) {
