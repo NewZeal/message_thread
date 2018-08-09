@@ -51,5 +51,8 @@ Breadcrumb error: https://www.drupal.org/project/message_thread/issues/2986743
 8.x-1.0-beta4
 Add reply form to display
 
+8.x-1.0-beta5
+Add template file missed from last commit
+
 TodDo
 Delete messages in thread when thread is deleted
