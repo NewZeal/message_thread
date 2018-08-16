@@ -16,45 +16,52 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
   public function getViewsData() {
     $data = parent::getViewsData();
     // We establish Views handlers for message_thread_index
-    $data['message_thread_index']['table']['group'] = t('Message Threads');
-    $data['message_thread_index']['table']['join'] = array(
-      'message_thread_field_data' => array(
+    $data['message_thread_index']['table']['group'] = $this->t('Message Threads');
+    $data['message_thread_index']['table']['join'] = [
+      'message_thread_field_data' => [
+        // links directly to message thread via thread_id
         'left_field' => 'thread_id',
         'field' => 'thread_id',
-      ),
-    );
-    $data['message_thread_index']['table']['join'] = array(
-      'message_field_data' => array(
+      ],
+      'message_field_data' => [
+        // links directly to message via mid
         'left_field' => 'mid',
         'field' => 'mid',
-      ),
-    );
-    $data['message_thread_index']['thread_id'] = array(
-      'argument' => array(
+      ]
+    ];
+
+    $data['message_thread_index']['thread_id'] = [
+      'title' => $this->t('Thread belonging to message'),
+      'help' => $this->t('Thread belonging to a message.'),
+      'argument' => [
         'id' => 'thread_id',
         'numeric' => TRUE,
-      ),
-      'relationship' => array(
+      ],
+      'relationship' => [
         'id' => 'standard',
         'base' => 'message_thread_field_data',
         'base field' => 'thread_id',
-        'title' => $this->t('Message Thread to Thread'),
+        'label' => $this->t('Message Thread to Thread'),
         'description' => $this->t('Link the message thread index to the thread.'),
-      ),
-    );
-    $data['message_thread_index']['mid'] = array(
-      'argument' => array(
+      ],
+    ];
+
+    $data['message_thread_index']['mid'] = [
+      'title' => $this->t('Messages belonging to Thread'),
+      'help' => $this->t('Relate all content belonging to a thread.'),
+      'argument' => [
         'id' => 'mid',
         'numeric' => TRUE,
-      ),
-      'relationship' => array(
+      ],
+      'relationship' => [
         'id' => 'standard',
         'base' => 'message_field_data',
         'base field' => 'mid',
-        'title' => $this->t('Message'),
+        'label' => $this->t('Messages belonging to thread'),
         'description' => $this->t('Link the message thread index to the message.'),
-      ),
-    );
+      ],
+    ];
+
     return $data;
   }
 
