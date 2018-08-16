@@ -103,6 +103,9 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
   }
 }
 
+/*
+ * Submit callback
+ */
 function message_thread_submit_message(array &$form, FormStateInterface $form_state) {
   $thread_id = $form_state->getValue('message_thread');
   // Save the relationship between the thread and the message
