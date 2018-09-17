@@ -280,8 +280,6 @@ function template_preprocess_message_thread(&$variables) {
   $variables['url'] = $message_thread->url('canonical', [
     'language' => $message_thread->language(),
   ]);
-  $variables['label'] = $variables['elements']['title'];
-  unset($variables['elements']['title']);
 
   // Helpful $content variable for templates.
   $variables += ['content' => []];
