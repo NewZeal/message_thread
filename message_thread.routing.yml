@@ -7,14 +7,13 @@ message_thread.overview_templates:
   requirements:
     _permission: 'administer message thread templates'
 
-
-#message_thread.thread_add:
-#  path: '/message/thread/add'
-#  defaults:
-#    _entity_form: 'message_thread.add'
-#    _title: 'Add message thread'
-#  requirements:
-#    _permission: 'administer message templates'
+message_thread.message_threads:
+  path: '/admin/content/message-thread'
+  defaults:
+    _title: 'Message Threads'
+    _entity_list: 'message_thread'
+  requirements:
+    _permission: 'overview message threads'
 
 message_thread.template_add:
   path: '/admin/structure/message-thread/template/add'

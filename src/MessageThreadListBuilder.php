@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Url;
 
 /**
  * Defines a class to build a listing of Message entities.
@@ -60,7 +61,7 @@ class MessageThreadListBuilder extends EntityListBuilder {
         'data' => $this->t('Created'),
         'class' => [RESPONSIVE_PRIORITY_LOW],
       ],
-      'text' => $this->t('Text'),
+      'title' => $this->t('Title'),
       'template' => [
         'data' => $this->t('Template'),
         'class' => [RESPONSIVE_PRIORITY_MEDIUM],
@@ -68,6 +69,14 @@ class MessageThreadListBuilder extends EntityListBuilder {
       'author' => [
         'data' => $this->t('Author'),
         'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'link' => [
+        'data' => $this->t('View'),
+        'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+      ],
+      'edit' => [
+        'data' => $this->t('Edit'),
+        'class' => [RESPONSIVE_PRIORITY_MEDIUM],
       ],
     ];
 
@@ -86,12 +95,31 @@ class MessageThreadListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
 
+    $url = Url::fromRoute('entity.message_thread.canonical', ['message_thread' => $entity->id()]);
+    $attributes = [
+      'class' => ['reports-back'],
+    ];
+    $link = [
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => 'View',
+      '#attributes' => $attributes,
+    ];
+    $url = Url::fromRoute('entity.message_thread.edit_form', ['message_thread' => $entity->id()]);
+    $edit = [
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => 'Edit',
+      '#attributes' => $attributes,
+    ];
     /** @var Message $entity */
     return [
       'changed' => $this->dateService->format($entity->getCreatedTime(), 'short'),
-//      'title' => $this->get('field_thread_title')->getValue()[0]['value'],
+      'title' => $entity->get('field_thread_title')->getValue()[0]['value'],
       'template' => $entity->getTemplate()->label(),
       'author' => $entity->getOwner()->label(),
+      'link' => render($link),
+      'edit' => render($edit)
     ];
   }
 
