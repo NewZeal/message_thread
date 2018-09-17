@@ -58,31 +58,25 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
       $message = $parameters['message'];
       if ($message->bundle()) {
         $thread_id = message_thread_relationship($message->id());
-        $message_thread = MessageThread::load($thread_id);
-        $thread_template = $message_thread->getTemplate();
+        // The message may not be associated with a thread
+        if ($thread_id) {
+          $message_thread = MessageThread::load($thread_id);
+          $thread_template = $message_thread->getTemplate();
 
-        $breadcrumb->addLink(Link::createFromRoute(
-          $thread_template->label(),
-          'message_thread.' . $thread_template->id(),
-          ['user' => $user->id()]
-        ));
+          $breadcrumb->addLink(Link::createFromRoute(
+            $thread_template->label(),
+            'message_thread.' . $thread_template->id(),
+            ['user' => $user->id()]
+          ));
 
-        $breadcrumb->addLink(Link::createFromRoute(
-          $message_thread->get('field_thread_title')->getValue()[0]['value'],
-          'entity.message_thread.canonical', [
-            'message_thread' => $message_thread->id()
-          ]
-        ));
-// Probably don't need the current message
-//        $label = isset( $message->get('field_message_private_subject')->getValue()[0]['value'])
-//          ?  $message->get('field_message_private_subject')->getValue()[0]['value'] :
-//          'Message';
-//
-//        $breadcrumb->addLink(Link::createFromRoute(
-//           $label,
-//          'entity.message.canonical', [
-//          'message' => $message->id()
-//        ]));
+          $breadcrumb->addLink(Link::createFromRoute(
+            $message_thread->get('field_thread_title')->getValue()[0]['value'],
+            'entity.message_thread.canonical', [
+              'message_thread' => $message_thread->id()
+            ]
+          ));
+
+        }
       }
 
 
