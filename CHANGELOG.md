@@ -54,5 +54,13 @@ Add reply form to display
 8.x-1.0-beta5
 Add template file missed from last commit
 
+8.x-1.0-beta6
+Fix breadcrumb error when message not in thread https://www.drupal.org/project/message_thread/issues/2986743
+Improve reply form https://www.drupal.org/project/message_thread/issues/2997062
+Fix reply submit redirect https://www.drupal.org/project/message_thread/issues/2992929
+Improve views fields https://www.drupal.org/project/message_thread/issues/2992948
+Remove reference to non existen field https://www.drupal.org/project/message_thread/issues/2997107
+Create / fix message thread overview page https://www.drupal.org/project/message_thread/issues/2996360
+
 TodDo
 Delete messages in thread when thread is deleted
