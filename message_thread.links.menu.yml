@@ -4,3 +4,8 @@ message_thread.overview_templates:
   description: 'Manage message templates.'
   route_name: message_thread.overview_templates
 
+message_thread.admin_content:
+  title: 'Message Threads'
+  description: 'Display all message threads.'
+  parent: 'system.admin_content'
+  route_name: message_thread.message_threads
