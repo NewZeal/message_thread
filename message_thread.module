@@ -14,6 +14,7 @@ use Drupal\message_thread\Entity\MessageThread;
 use Drupal\views\Views;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\message\Entity\MessageTemplate;
+use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 use Drupal\Core\Access\AccessResult;
 use Drupal\message_thread\MessageThreadAccessControlHandler;
@@ -46,9 +47,11 @@ function message_thread_help($route_name, RouteMatchInterface $arg) {
  * Implements hook_form_alter().
  */
 function message_thread_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+
   if (substr($form_id,0, 8) != 'message_' ) {
     return;
   }
+
   // When a message is created we need to ensure that the participants are included
   // This is best done in the validation hook to ensure participants are not missed from submit functions
   $thread_templates = \Drupal::entityTypeManager()->getListBuilder('message_thread_template')->load();
@@ -57,22 +60,28 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
     $message_template = MessageTemplate::load($settings['message_template']);
     $message_form_id = 'message_' . $message_template->getTemplate() . '_form';
     if ($form_id == $message_form_id) {
+      $thread_id = NULL;
       $parameters = \Drupal::routeMatch()->getParameters();
+      if ($parameters->has('message_thread')) {
+        if (is_object($parameters->get('message_thread'))) {
+          $thread_id = $parameters->get('message_thread')->id();
+        }
+        else {
+          $thread_id = $parameters->get('message_thread');
+        }
+      }
+      if ($form_state->get('thread_id') != NULL) {
+        $thread_id = $form_state->get('thread_id');
+      }
 
       $owner = $form['uid']['widget'][0]['target_id']['#default_value'];
 
-      if ($parameters->has('message_thread')) {
-        if (is_object($parameters->get('message_thread'))) {
-          $id = $parameters->get('message_thread')->id();
-        }
-        else {
-          $id = $parameters->get('message_thread');
-        }
+      if ($thread_id) {
         $form['message_thread'] = [
           '#type' => 'hidden',
-          '#value' => $id
+          '#value' => $thread_id
         ];
-        $message_thread = MessageThread::load( $id);
+        $message_thread = MessageThread::load( $thread_id);
         $participants = $message_thread->get('field_thread_participants')->getValue();
         $widget_base = $form['field_message_private_to_user']['widget'][0];
         foreach ($participants as $key => $participant) {
@@ -433,28 +442,22 @@ function message_thread_reply_link($entity, $component) {
   );
 }
 
-/*
+/**
  * Helper function to build the reply form
  */
 function message_thread_reply_form($entity, $component) {
-  // Find out if any messages in this conversation
-  $label = t('Send a message');
-  $count = message_thread_message_count($entity);
-  if ($count > 0) {
-    $label = t('Reply');
-  }
-
-  $message = \Drupal::service('entity_type.manager')->getStorage('message')->create(array(
+  $user = \Drupal::currentUser();
+  $account = User::load($user->id());
+  $ref = User::load(1);
+  $message = \Drupal::entityTypeManager()->getStorage('message')->create([
     'template' => 'private_message',
-  ));
-  $form = \Drupal::service('entity.form_builder')->getForm($message);
+    'uid' => $account->id(),
+  ]);
 
-  // Apply the message thread to the message
-  $form['message_thread'] = [
-    '#type' => 'hidden',
-    '#value' => $entity->id()
+  $args = [
+    'thread_id' => $entity->id()
   ];
-
+  $form = \Drupal::service('entity.form_builder')->getForm($message, 'default', $args);
   return $form;
 }
 

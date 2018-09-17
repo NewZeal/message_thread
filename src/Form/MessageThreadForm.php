@@ -171,11 +171,11 @@ class MessageThreadForm extends ContentEntityForm {
       if (!is_numeric($key)) {
         continue;
       }
-      if ($participant['target_id'] == $values['uid'][0]['target_id']) {
+      if (isset($participant['target_id']) && $participant['target_id'] == $values['uid'][0]['target_id']) {
         $found = TRUE;
 
       }
-      if ($participant['target_id'] == NULL) {
+      if (isset($participant['target_id']) && $participant['target_id'] == NULL) {
         unset($values['field_thread_participants'][$key]);
       }
 
