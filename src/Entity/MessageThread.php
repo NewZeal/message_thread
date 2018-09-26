@@ -181,8 +181,25 @@ class MessageThread extends ContentEntityBase {
       ->setSettings([
         'target_type' => 'user',
         'default_value' => 0,
+        'handler' => 'default',
       ])
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'author',
+        'weight' => -3,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => 60,
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+        'weight' => -3,
+      ))
       ->setDefaultValueCallback('Drupal\message\Entity\Message::getCurrentUserId')
+      ->setDisplayConfigurable('view', TRUE)
       ->setTranslatable(TRUE);
 
     $fields['template'] = BaseFieldDefinition::create('entity_reference')
@@ -194,6 +211,16 @@ class MessageThread extends ContentEntityBase {
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created on'))
       ->setDescription(t('The time that the thread was created.'))
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'timestamp',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'datetime_timestamp',
+        'weight' => 10,
+      ])
+      ->setDisplayConfigurable('view', TRUE)
       ->setTranslatable(TRUE);
 
     $fields['arguments'] = BaseFieldDefinition::create('map')

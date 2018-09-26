@@ -287,9 +287,7 @@ function template_preprocess_message_thread(&$variables) {
   /** @var \Drupal\message_thread\messageThreadInterface $message_thread */
   $message_thread = $variables['message_thread'];
   $variables['date'] = \Drupal::service('renderer')->render($variables['elements']['created']);
-  unset($variables['elements']['created']);
   $variables['author_name'] = \Drupal::service('renderer')->render($variables['elements']['uid']);
-  unset($variables['elements']['uid']);
 
   $variables['url'] = $message_thread->url('canonical', [
     'language' => $message_thread->language(),
@@ -330,20 +328,6 @@ function message_thread_entity_extra_field_info() {
     $extra_fields['message_thread'][$machine_name]['display']['message_thread_reply_form'] = [
       'label' => t('Reply Form'),
       'description' => t('Reply to this thread using embedded form'),
-      'weight' => 0,
-      'visible' => FALSE,
-    ];
-
-    $extra_fields['message_thread'][$machine_name]['display']['uid'] = [
-      'label' => t('Author'),
-      'description' => t('Creator of this thread'),
-      'weight' => 0,
-      'visible' => FALSE,
-    ];
-
-    $extra_fields['message_thread'][$machine_name]['display']['created'] = [
-      'label' => t('Created'),
-      'description' => t('Date this thread was created'),
       'weight' => 0,
       'visible' => FALSE,
     ];
