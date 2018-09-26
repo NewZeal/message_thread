@@ -62,5 +62,8 @@ Improve views fields https://www.drupal.org/project/message_thread/issues/299294
 Remove reference to non existen field https://www.drupal.org/project/message_thread/issues/2997107
 Create / fix message thread overview page https://www.drupal.org/project/message_thread/issues/2996360
 
+8.x-1.0-beta7
+Apply configurable display fields: https://www.drupal.org/project/message_thread/issues/2998013
+
 TodDo
 Delete messages in thread when thread is deleted
