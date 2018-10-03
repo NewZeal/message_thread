@@ -164,3 +164,13 @@ function message_thread_update_8002() {
   $schema = drupal_get_module_schema('message_thread');
   $schema_manager->createTable('message_thread_statistics', $schema['message_thread_statistics']);
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Turn on statistics
+ */
+function message_thread_update_8003() {
+  \Drupal::state()->set('message.maintain_entity_statistics', true);
+}
+
