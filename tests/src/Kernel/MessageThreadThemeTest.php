@@ -58,6 +58,11 @@ class MessageThreadThemeTest extends KernelTestBase {
     $build = $this->container->get('entity_type.manager')->getViewBuilder('message_thread')->view($message_thread);
     $output = $this->container->get('renderer')->renderRoot($build);
     $this->setRawContent($output);
+    $xpath = $this->xpath('//div');
+
+    // @todo Something is off here, as *only* the div is there, no content.
+    // @see https://github.com/Gizra/message/issues/128
+    $this->assertTrue($xpath, 'A div has been found wrapping the message text.');
   }
 
 }

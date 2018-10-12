@@ -32,7 +32,6 @@ class MessageThreadTemplateCrudTest extends MessageThreadTestBase {
       'template' => 'Template',
       'label' => 'Label',
       'description' => 'Description',
-      'text' => 'Text',
     ];
     foreach ($values as $key => $label) {
       $param = [
