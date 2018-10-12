@@ -49,8 +49,11 @@ class MessageThreadThemeTest extends KernelTestBase {
     $template = 'dummy_message_thread';
     // Create message thread to be rendered.
     $message_thread_template = $this->createMessageThreadTemplate($template, 'Dummy message thread', '', ['Text to be wrapped by div.']);
-    $message_thread = MessageThread::create(['template' => $message_thread_template->id()])
-      ->setOwner($this->account);
+    $message_thread = MessageThread::create([
+      'template' => $message_thread_template->id(),
+    ])
+      ->setOwner($this->account)
+      ->setCreatedTime(REQUEST_TIME);
 
     $message_thread->save();
 
