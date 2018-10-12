@@ -18,7 +18,7 @@ use Drupal\user\UserInterface;
  *
  * @ContentEntityType(
  *   id = "message_thread",
- *   label = @Translation("Message Thread"),
+ *   label = @Translation("Message thread"),
  *   bundle_label = @Translation("Message thread"),
  *   module = "message_thread",
  *   base_table = "message_thread",
