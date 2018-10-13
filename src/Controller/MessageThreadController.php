@@ -8,6 +8,7 @@ use Drupal\message_thread\Entity\MessageThread;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\message_thread\MessageThreadTemplateInterface;
 use Drupal\message\Entity\Message;
+use Drupal\message\MessageTemplateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\views\Views;
 
