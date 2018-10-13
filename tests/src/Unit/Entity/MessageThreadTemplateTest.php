@@ -2,13 +2,8 @@
 
 namespace Drupal\Tests\message_thread\Unit\Entity;
 
-use Drupal\Core\Language\Language;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Render\RendererInterface;
-use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message_thread\Entity\MessageThreadTemplate;
 use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Unit tests for the message template entity.

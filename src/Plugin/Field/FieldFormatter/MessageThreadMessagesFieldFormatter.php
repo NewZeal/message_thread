@@ -36,21 +36,6 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
-//    $types = Views::pluginList();
-//    $options = array();
-//    foreach ($types as $key => $type) {
-//      if ($type['type'] == 'display') {
-//        $options[str_replace('display:', '', $key)] = $type['title']->render();
-//      }
-//    }
-//
-//    $form['plugin_types'] = [
-//      '#type' => 'checkboxes',
-//      '#options' => $options,
-//      '#title' => $this->t('View display plugins to allow'),
-//      '#default_value' => $this->getSetting('plugin_types'),
-//    ];
-
     return $form;
   }
 
@@ -113,7 +98,7 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
           $title = $view->getTitle();
           $title_render_array = array(
             '#theme' => 'viewsreference__view_title',
-            '#title' => $this->t($title),
+            '#title' => $title,
           );
         }
 

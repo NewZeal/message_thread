@@ -16,7 +16,6 @@ class MessageThreadStorageSchema extends SqlContentEntityStorageSchema {
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE) {
     $schema = parent::getEntitySchema($entity_type, $reset = FALSE);
 
-
     $schema['message_thread_index'] = array(
       'description' => 'Maintains denormalized information about thread/message relationships.',
       'fields' => array(

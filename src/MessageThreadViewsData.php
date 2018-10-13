@@ -15,19 +15,19 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
    */
   public function getViewsData() {
     $data = parent::getViewsData();
-    // We establish Views handlers for message_thread_index
+    // We establish Views handlers for message_thread_index.
     $data['message_thread_index']['table']['group'] = $this->t('Message Threads');
     $data['message_thread_index']['table']['join'] = [
       'message_thread_field_data' => [
-        // links directly to message thread via thread_id
+        // Links directly to message thread via thread_id.
         'left_field' => 'thread_id',
         'field' => 'thread_id',
       ],
       'message_field_data' => [
-        // links directly to message via mid
+        // Links directly to message via mid.
         'left_field' => 'mid',
         'field' => 'mid',
-      ]
+      ],
     ];
 
     $data['message_thread_index']['thread_id'] = [

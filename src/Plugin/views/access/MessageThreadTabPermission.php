@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\message_private\Plugin\views\access\InboxPermission.
- */
-
 namespace Drupal\message_thread\Plugin\views\access;
 
 use Drupal\Core\Cache\Cache;
@@ -66,6 +61,9 @@ class MessageThreadTabPermission extends AccessPluginBase implements CacheableDe
     $route->setRequirement('_custom_access', 'message_thread_tab_access_check');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function summaryTitle() {
     return $this->t('Tab Permission');
   }

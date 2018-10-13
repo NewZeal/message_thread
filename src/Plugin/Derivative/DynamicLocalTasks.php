@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\message_thread\Plugin\Derivative\DynamicLocalTasks.
- */
 
 namespace Drupal\message_thread\Plugin\Derivative;
 
@@ -14,7 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\views\Views;
 use Drupal\Core\Routing\RouteProviderInterface;
 
-
 /**
  * Defines dynamic local tasks.
  */
@@ -22,18 +17,27 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
 
   /**
    * The template storage manager.
+   *
+   * @var templateStorage
    */
   protected $templateStorage;
 
+  /**
+   * The entity type manager.
+   *
+   * @var entityTypeManager
+   */
   protected $entityTypeManager;
 
+  /**
+   * The route provider.
+   *
+   * @var routeProvider
+   */
   protected $routeProvider;
 
   /**
    * Constructs the message thread template  form.
-   *
-   * @param \Drupal\message\MessagePurgePluginManager $purge_manager
-   *   The message purge plugin manager service.
    */
   public function __construct($base_plugin_id, EntityStorageInterface $template_storage, EntityTypeManager $entity_type_manager, RouteProviderInterface $route_provider) {
     $this->templateStorage = $template_storage;
@@ -53,24 +57,23 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
     );
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    
-    // Create tabs for each message thread type
+
+    // Create tabs for each message thread type.
     $thread_templates = $this->entityTypeManager->getListBuilder('message_thread_template')->load();
     foreach ($thread_templates as $name => $template) {
       $settings = $template->getSettings();
 
-      // Thread page tabs
+      // Thread page tabs.
       $view_route = 'view.' . $settings['thread_view_id'] . '.' . $settings['thread_view_display_id'];
       $exists = count($this->routeProvider->getRoutesByNames([$view_route])) === 1;
       if (!$exists) {
         continue;
       }
-      // User page tab
+      // User page tab.
       $view = Views::getView($settings['thread_view_id']);
       $view->setDisplay($settings['thread_view_display_id']);
       if (!$view->hasUrl()) {
@@ -86,4 +89,5 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
 
     return $this->derivatives;
   }
+
 }

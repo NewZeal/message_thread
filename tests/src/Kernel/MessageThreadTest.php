@@ -3,10 +3,8 @@
 namespace Drupal\Tests\message_thread\Kernel;
 
 use Drupal\Component\Utility\Unicode;
-use Drupal\Core\Language\Language;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message_thread\Entity\MessageThread;
-use Drupal\message_thread\MessageThreadInterface;
 use Drupal\simpletest\UserCreationTrait;
 
 /**
@@ -75,6 +73,5 @@ class MessageThreadTest extends KernelTestBase {
     $owner = $message_thread->getOwner();
     $this->assertEquals($account->id(), $owner->id());
   }
-
 
 }

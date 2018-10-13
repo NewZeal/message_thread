@@ -4,8 +4,6 @@ namespace Drupal\message_thread\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Language\Language;
-use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message_thread\MessageThreadTemplateInterface;
 
 /**

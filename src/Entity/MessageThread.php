@@ -7,10 +7,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Language\Language;
-use Drupal\Core\Render\Markup;
 use Drupal\message\MessageException;
-use Drupal\message\MessageInterface;
-use Drupal\message\MessageThreadTemplateInterface;
 use Drupal\user\UserInterface;
 
 /**
