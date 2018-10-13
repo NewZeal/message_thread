@@ -587,7 +587,7 @@ function message_thread_get_messages($thread_id) {
 /**
  * Implements hook_ENTITY_TYPE_view_alter() for message thread entities.
  */
-function message_history_message_thread_view_alter(array &$build,
+function message_thread_message_thread_view_alter(array &$build,
                                                    EntityInterface $message_thread,
                                                    EntityViewDisplayInterface $display) {
 

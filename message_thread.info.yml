@@ -7,4 +7,3 @@ configure: message_thread.admin_settings
 dependencies:
   - drupal:views
   - message_private:message_private
-  - message_history:message_history
