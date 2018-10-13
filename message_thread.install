@@ -24,21 +24,21 @@ function message_thread_update_8001() {
   $field_definition->setSetting(
     'handler', 'default'
   );
-  $field_definition->setDisplayOptions('view', array(
+  $field_definition->setDisplayOptions('view', [
     'label' => 'above',
     'type' => 'author',
     'weight' => -3,
-  ));
-  $field_definition->setDisplayOptions('form', array(
+  ]);
+  $field_definition->setDisplayOptions('form', [
     'type' => 'entity_reference_autocomplete',
-    'settings' => array(
+    'settings' => [
       'match_operator' => 'CONTAINS',
       'size' => 60,
       'autocomplete_type' => 'tags',
       'placeholder' => '',
-    ),
+    ],
     'weight' => -3,
-  ));
+  ]);
   $field_definition->setDisplayConfigurable('form', TRUE);
   $field_definition->setDisplayConfigurable('view', TRUE);
   $entity_definition_update_manager->updateFieldStorageDefinition($field_definition);

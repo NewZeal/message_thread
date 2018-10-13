@@ -43,16 +43,16 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
     $settings = $this->getSettings();
 
-    $allowed = array();
+    $allowed = [];
     foreach ($settings['plugin_types'] as $type) {
       if ($type) {
         $allowed[] = $type;
       }
     }
-    $summary[] = t('Allowed plugins: @view', array('@view' => implode(', ', $allowed)));
+    $summary[] = t('Allowed plugins: @view', ['@view' => implode(', ', $allowed)]);
     return $summary;
   }
 
@@ -96,10 +96,10 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
       if (!empty($view->result) || !empty($view->empty)) {
         if ($title) {
           $title = $view->getTitle();
-          $title_render_array = array(
+          $title_render_array = [
             '#theme' => 'viewsreference__view_title',
             '#title' => $title,
-          );
+          ];
         }
 
         if ($this->getSetting('plugin_types')) {

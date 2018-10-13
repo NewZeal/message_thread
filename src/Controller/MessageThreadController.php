@@ -94,21 +94,15 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
 
   /**
    * Form output to add a message entity of message_template inside a thread.
-   *
-   * @param \Drupal\message\MessageTemplateInterface $message_template
-   *   The message template object.
-   *
-   * @return array
-   *   An array as expected by drupal_render().
    */
   public function reply(MessageTemplateInterface $message_template, $message_thread) {
     $message = Message::create(['template' => $message_template]);
     $form = $this->entityFormBuilder()->getForm($message);
 
-    $form['thread_id'] = array(
+    $form['thread_id'] = [
       '#type' => 'hidden',
       '#value' => $message_thread,
-    );
+    ];
 
     foreach (array_keys($form['actions']) as $action) {
       if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
@@ -150,15 +144,15 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     $view = Views::getView($view_name);
     // Someone may have deleted the View.
     if (!is_object($view)) {
-      return array(
+      return [
         '#markup' => t('The View for message thread inbox has been deleted.'),
-      );
+      ];
     }
     // No access.
     if (!$view->access($display_id)) {
-      return array(
+      return [
         '#markup' => t('You do not have access to this resource.'),
-      );
+      ];
     }
 
     $view->setDisplay($display_id);
@@ -182,9 +176,9 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     }
     else {
       $url = Url::fromRoute('message.template_add');
-      return array(
+      return [
         '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' . $url->getInternalPath() . '">sending a message to someone</a>.',
-      );
+      ];
     }
   }
 
@@ -211,15 +205,15 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     $view = Views::getView($view_name);
     // Someone may have deleted the View.
     if (!is_object($view)) {
-      return array(
+      return [
         '#markup' => t('The View for message thread sent has been deleted.'),
-      );
+      ];
     }
     // No access.
     if (!$view->access($display_id)) {
-      return array(
+      return [
         '#markup' => t('You do not have access to this resource.'),
-      );
+      ];
     }
 
     $view->setDisplay($display_id);
@@ -243,9 +237,9 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     }
     else {
       $url = Url::fromRoute('message.template_add');
-      return array(
+      return [
         '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' . $url->getInternalPath() . '">sending a message to someone</a>.',
-      );
+      ];
     }
   }
 

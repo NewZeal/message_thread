@@ -50,10 +50,10 @@ class MessageThreadPermissions implements ContainerInjectionInterface {
     foreach ($this->entityManager->getStorage('message_thread_template')->loadMultiple() as $template) {
       $permissions += [
         'create and receive ' . $template->id() . ' message threads' => [
-          'title' => $this->t('Able to participate in %thread threads', array('%thread' => $template->label())),
+          'title' => $this->t('Able to participate in %thread threads', ['%thread' => $template->label()]),
         ],
         'view own ' . $template->id() . ' message thread tab' => [
-          'title' => $this->t('View own %thread tab', array('%thread' => $template->label())),
+          'title' => $this->t('View own %thread tab', ['%thread' => $template->label()]),
         ],
       ];
     }

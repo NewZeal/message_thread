@@ -35,10 +35,15 @@ class MessageThreadTemplateForm extends EntityForm {
   /**
    * The template storage manager.
    *
-   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $templateStorage;
 
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
   protected $entityTypeManager;
 
   /**
@@ -86,16 +91,14 @@ class MessageThreadTemplateForm extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $template->id(),
       '#maxlength' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
-//      '#disabled' => $template->isLocked(),
       '#machine_name' => [
         'exists' => '\Drupal\message_thread\Entity\MessageThreadTemplate::load',
         'source' => ['label'],
       ],
       '#description' => $this->t('A unique machine-readable name for this message thread template . It must only contain lowercase letters, numbers, and underscores. This name will be used for constructing the URL of the %message-add page, in which underscores will be converted into hyphens.', [
           '%message-add' => $this->t('Add message'),
-        ]),
+      ]),
     ];
-
 
     $settings = $this->entity->getSettings();
 
@@ -106,7 +109,7 @@ class MessageThreadTemplateForm extends EntityForm {
     ];
 
     $message_templates = $this->entityTypeManager->getListBuilder('message_template')->load();
-    $templates = array();
+    $templates = [];
     foreach ($message_templates as $name => $template) {
       $templates[$name] = $template->label();
     }
@@ -119,10 +122,10 @@ class MessageThreadTemplateForm extends EntityForm {
       '#required' => TRUE,
       '#description' => $this->t('Select the message template  to which this message thread template applies.', [
           '%message-add' => $this->t('Add message'),
-        ]),
+      ]),
     ];
 
-    /*
+/*
  * Message thread views
  */
     $options = ['_none' => 'None'];
@@ -134,14 +137,14 @@ class MessageThreadTemplateForm extends EntityForm {
       '#default_value' => isset($settings['thread_view_id']) ? $settings['thread_view_id'] : '',
       '#description' => $this->t('Select the View you wish to use to display threads messages of this type in the tab on the User page.'),
       '#target_type' => 'view',
-      '#ajax' => array(
-        'callback' => array($this, 'getThreadDisplayIds'),
+      '#ajax' => [
+        'callback' => [$this, 'getThreadDisplayIds'],
         'event' => 'change',
-        'progress' => array(
+        'progress' => [
           'type' => 'throbber',
           'message' => t('Getting display Ids...'),
-        ),
-      )
+        ],
+      ],
     ];
 
     $default_value = isset($settings['thread_view_id']) ? $settings['thread_view_id'] : '';
@@ -158,16 +161,16 @@ class MessageThreadTemplateForm extends EntityForm {
       '#options' => $options,
       '#default_value' => isset($settings['thread_view_display_id']) ? $settings['thread_view_display_id'] : '',
       '#description' => $this->t('Select the Display from the View you selected above.'),
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'message-thread-view-display-id',
-        ),
-      ),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="settings[thread_view_id]"]' => array('!value' => '_none'),
-        ),
-      ),
+        ],
+      ],
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[thread_view_id]"]' => ['!value' => '_none'],
+        ],
+      ],
 
     ];
 
@@ -181,14 +184,14 @@ class MessageThreadTemplateForm extends EntityForm {
       '#default_value' => isset($settings['view_id']) ? $settings['view_id'] : '',
       '#description' => $this->t('Select the View you wish to use to display messages of this type when viewing a thread.'),
       '#target_type' => 'view',
-      '#ajax' => array(
-        'callback' => array($this, 'getDisplayIds'),
+      '#ajax' => [
+        'callback' => [$this, 'getDisplayIds'],
         'event' => 'change',
-        'progress' => array(
+        'progress' => [
           'type' => 'throbber',
           'message' => t('Getting display Ids...'),
-        ),
-      )
+        ],
+      ],
     ];
 
     $default_value = isset($settings['view_id']) ? $settings['view_id'] : '';
@@ -205,16 +208,16 @@ class MessageThreadTemplateForm extends EntityForm {
       '#options' => $options,
       '#default_value' => isset($settings['view_display_id']) ? $settings['view_display_id'] : '',
       '#description' => $this->t('Select the Display from the View you selected above.'),
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'message-view-display-id',
-        ),
-      ),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="settings[view_id]"]' => array('!value' => '_none'),
-        ),
-      ),
+        ],
+      ],
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[view_id]"]' => ['!value' => '_none'],
+        ],
+      ],
 
     ];
 
@@ -226,10 +229,6 @@ class MessageThreadTemplateForm extends EntityForm {
       '#description' => $this->t('The human-readable description of this message thread template .'),
     ];
 
-
-//    $multiple = new MessageTemplateMultipleTextField($this->entity, [get_class($this), 'addMoreAjax']);
-//    $multiple->textField($form, $form_state);
-
     $form['settings']['token options']['clear'] = [
       '#title' => $this->t('Clear empty tokens'),
       '#type' => 'checkbox',
@@ -237,23 +236,12 @@ class MessageThreadTemplateForm extends EntityForm {
       '#default_value' => isset($settings['token options']['clear']) ? $settings['token options']['clear'] : FALSE,
     ];
 
-    $form['settings']['token options']['token replace'] = array(
+    $form['settings']['token options']['token replace'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Token replace'),
       '#description' => $this->t('When this option is selected, token processing will happen.'),
       '#default_value' => !isset($settings['token options']['token replace']) || !empty($settings['token options']['token replace']),
-    );
-
-//    $form['settings']['purge_override'] = [
-//      '#title' => $this->t('Override global purge settings'),
-//      '#type' => 'checkbox',
-//      '#description' => $this->t('Override <a href=":settings">global purge settings</a> for messages using this template.', [':settings' => Url::fromRoute('message.settings')->toString()]),
-////      '#default_value' => $this->entity->getSetting('purge_override'),
-//    ];
-
-    // Add the purge method settings form.
-//    $settings = $this->entity->getSetting('purge_methods', []);
-//    $this->purgeManager->purgeSettingsForm($form, $form_state, $settings);
+    ];
 
     return $form;
   }
@@ -263,7 +251,7 @@ class MessageThreadTemplateForm extends EntityForm {
    */
   protected function getMessageViews($entity_data_field = 'message_field_data') {
     $views = Views::getAllViews();
-    $options = array();
+    $options = [];
     foreach ($views as $view) {
       if ($view->get('base_table') == $entity_data_field) {
         foreach ($view->get('display') as $display) {
@@ -279,7 +267,7 @@ class MessageThreadTemplateForm extends EntityForm {
    */
   protected function getAllViewsDisplayIds() {
     $views = Views::getAllViews();
-    $options = array();
+    $options = [];
     foreach ($views as $view) {
       foreach ($view->get('display') as $display) {
         $options[$display['id']] = $display['display_title'];
@@ -293,7 +281,7 @@ class MessageThreadTemplateForm extends EntityForm {
    */
   protected function getViewDisplayIds($entity_id) {
     $views = Views::getAllViews();
-    $options = array();
+    $options = [];
 
     foreach ($views as $view) {
       if ($view->get('id') == $entity_id) {

@@ -180,21 +180,21 @@ class MessageThread extends ContentEntityBase {
         'default_value' => 0,
         'handler' => 'default',
       ])
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'author',
         'weight' => -3,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => 60,
           'autocomplete_type' => 'tags',
           'placeholder' => '',
-        ),
+        ],
         'weight' => -3,
-      ))
+      ])
       ->setDefaultValueCallback('Drupal\message\Entity\Message::getCurrentUserId')
       ->setDisplayConfigurable('view', TRUE)
       ->setTranslatable(TRUE);
@@ -310,36 +310,6 @@ class MessageThread extends ContentEntityBase {
     $this->setArguments(array_merge($tokens, $arguments));
 
     parent::save();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageInterface
-   *   A message entity ready to be save.
-   */
-  public static function create(array $values = []) {
-    return parent::create($values);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageInterface
-   *   A requested message entity.
-   */
-  public static function load($id) {
-    return parent::load($id);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageInterface[]
-   *   Array of requested message entities.
-   */
-  public static function loadMultiple(array $ids = NULL) {
-    return parent::loadMultiple($ids);
   }
 
   /**

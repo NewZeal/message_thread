@@ -124,17 +124,17 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
   // Save the relationship between the thread and the message.
   db_insert('message_thread_index')
     ->fields(
-      array(
+      [
         'mid' => $form_state->getValue('mid'),
         'thread_id' => $thread_id,
         'created' => REQUEST_TIME,
-      )
+      ]
     )->execute();
 
   // Redirect to the thread not the message.
-  $params = array(
+  $params = [
     'message_thread' => $thread_id,
-  );
+  ];
   $url = Url::fromRoute('entity.message_thread.canonical', $params);
   $form_state->setRedirectUrl($url);
 }
@@ -146,9 +146,9 @@ function message_thread_form_message_private_message_edit_form_alter(array &$for
   // Redirect to the thread not the message.
   $mid = $form_state->getFormObject()->getEntity()->id();
   if (message_thread_relationship($mid)) {
-    $params = array(
+    $params = [
       'message_thread' => message_thread_relationship($mid),
-    );
+    ];
     $url = Url::fromRoute('entity.message_thread.canonical', $params);
     $form_state->setRedirectUrl($url);
     $link = [
@@ -169,9 +169,9 @@ function message_thread_form_message_private_message_form_alter(array &$form, Fo
     $parts = explode('/', $_GET['destination']);
     $thread_id = array_pop($parts);
     if (is_numeric($thread_id)) {
-      $params = array(
+      $params = [
         'message_thread' => $thread_id,
-      );
+      ];
       $url = Url::fromRoute('entity.message_thread.canonical', $params);
       $form_state->setRedirectUrl($url);
       $link = [
@@ -394,7 +394,7 @@ function message_thread_get_messages_display(array $settings, $entity) {
   }
 
   $view->setDisplay($display_id);
-  $view->setArguments(array($entity->id()));
+  $view->setArguments([$entity->id()]);
   $view->build($display_id);
   $view->preExecute();
   $view->execute($display_id);
@@ -417,25 +417,25 @@ function message_thread_reply_link($entity, $component) {
     $label = t('Reply');
   }
   // Todo template should reference actual template.
-  $params = array(
+  $params = [
     'message_template' => 'private_message',
     'message_thread' => $entity->id(),
-  );
+  ];
   $options = [
     'query' => [
       'destination' => '/message/thread/' . $entity->id(),
     ],
   ];
   $url = Url::fromRoute('message_thread.reply', $params, $options);
-  return array(
+  return [
     '#type' => 'link',
     '#url' => $url,
     '#title' => $label,
     '#weight' => $component['weight'],
-    '#attributes' => array(
-      'class' => array('message-thread-reply'),
-    ),
-  );
+    '#attributes' => [
+      'class' => ['message-thread-reply'],
+    ],
+  ];
 }
 
 /**

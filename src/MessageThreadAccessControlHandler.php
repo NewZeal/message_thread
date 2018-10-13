@@ -32,7 +32,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\Core\Access\AccessResult[] $results */
     $results = $this
       ->moduleHandler()
-      ->invokeAll('message_thread_access_control', array($params));
+      ->invokeAll('message_thread_access_control', [$params]);
 
     foreach ($results as $result) {
       if ($result->isNeutral()) {

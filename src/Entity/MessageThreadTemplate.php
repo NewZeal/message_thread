@@ -263,21 +263,4 @@ class MessageThreadTemplate extends ConfigEntityBundleBase implements MessageThr
     return !$this->isNew();
   }
 
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageTemplateInterface
-   *   A message template thread object ready to be save.
-   */
-  public static function create(array $values = []) {
-    return parent::create($values);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
-  }
-
 }
