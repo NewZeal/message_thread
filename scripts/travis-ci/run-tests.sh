@@ -3,16 +3,28 @@
 # Run either PHPUnit tests or PHP_CodeSniffer tests on Travis CI, depending
 # on the passed in parameter.
 
+mysql_to_ramdisk() {
+    sudo service mysql stop
+    sudo mv /var/lib/mysql /var/run/tmpfs
+    sudo ln -s /var/run/tmpfs /var/lib/mysql
+    sudo service mysql start
+}
+
 case "$1" in
     PHP_CodeSniffer)
-        cd $MODULE_DIR
-        composer install
+        cd ${TRAVIS_BUILD_DIR}/
         ./vendor/bin/phpcs
         exit $?
         ;;
-    *)
-        ln -s $MODULE_DIR $DRUPAL_DIR/modules/message_thread
-        cd $DRUPAL_DIR
-        ./vendor/bin/phpunit -c ./core/phpunit.xml.dist $MODULE_DIR/tests
+    8.*.x)
+        mysql_to_ramdisk
+        cd ${TRAVIS_BUILD_DIR}/
+        ls -la
+        ls -la ../build/modules/contrib/
+        ./vendor/bin/phpunit -c ${DRUPAL_DIR}/core ./tests
         exit $?
+        ;;
+    *)
+        echo "Unknown test '$1'"
+        exit 1
 esac
