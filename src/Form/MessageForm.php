@@ -36,17 +36,6 @@ class MessageForm extends MessageMessageForm {
 
   /**
    * {@inheritdoc}
-   *
-   * Updates the message object by processing the submitted values.
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Build the node object from the submitted values.
-    parent::submitForm($form, $form_state);
-
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
