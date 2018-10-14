@@ -185,7 +185,7 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   /**
    * Message thread title.
    *
-   * @param MessageThread|null $message_thread
+   * @param Drupal\message_thread\Entity\MessageThread|null $message_thread
    *   The message thread object.
    *
    * @return array|string

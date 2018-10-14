@@ -47,9 +47,13 @@ class MessageThreadTemplateForm extends EntityForm {
   protected $entityTypeManager;
 
   /**
-   * Constructs the message thread template  form.
+   * Constructs the message thread template form.
    *
    * @param \Drupal\message\MessagePurgePluginManager $purge_manager
+   *   The message purge plugin manager service.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $template_storage
+   *   The message purge plugin manager service.
+   * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The message purge plugin manager service.
    */
   public function __construct(MessagePurgePluginManager $purge_manager, EntityStorageInterface $template_storage, EntityTypeManager $entity_type_manager) {
@@ -96,7 +100,7 @@ class MessageThreadTemplateForm extends EntityForm {
         'source' => ['label'],
       ],
       '#description' => $this->t('A unique machine-readable name for this message thread template . It must only contain lowercase letters, numbers, and underscores. This name will be used for constructing the URL of the %message-add page, in which underscores will be converted into hyphens.', [
-          '%message-add' => $this->t('Add message'),
+        '%message-add' => $this->t('Add message'),
       ]),
     ];
 
@@ -114,20 +118,17 @@ class MessageThreadTemplateForm extends EntityForm {
       $templates[$name] = $template->label();
     }
 
-
     $form['settings']['message_template'] = [
       '#type' => 'select',
       '#options' => $templates,
       '#default_value' => isset($settings['message_template']) ? $settings['message_template'] : '',
       '#required' => TRUE,
       '#description' => $this->t('Select the message template  to which this message thread template applies.', [
-          '%message-add' => $this->t('Add message'),
+        '%message-add' => $this->t('Add message'),
       ]),
     ];
 
-/*
- * Message thread views
- */
+    // Message thread views.
     $options = ['_none' => 'None'];
     $options += $this->getMessageViews('message_thread_field_data');
     $form['settings']['thread_view_id'] = [
@@ -174,9 +175,7 @@ class MessageThreadTemplateForm extends EntityForm {
 
     ];
 
-    /*
-     * Message Views
-     */
+    // Message views.
     $form['settings']['view_id'] = [
       '#title' => $this->t('Message View'),
       '#type' => 'select',
@@ -221,7 +220,6 @@ class MessageThreadTemplateForm extends EntityForm {
 
     ];
 
-
     $form['description'] = [
       '#title' => $this->t('Description'),
       '#type' => 'textfield',
@@ -247,7 +245,7 @@ class MessageThreadTemplateForm extends EntityForm {
   }
 
   /**
-   * Helper function to get select array of all views of entity type message
+   * Helper function to get select array of all views of entity type message.
    */
   protected function getMessageViews($entity_data_field = 'message_field_data') {
     $views = Views::getAllViews();
@@ -293,9 +291,13 @@ class MessageThreadTemplateForm extends EntityForm {
     return $options;
   }
 
+  /**
+   * Get display ids of View.
+   */
   public function getThreadDisplayIds(array &$form, FormStateInterface $form_state) {
     return $this->getDisplayIds($form, $form_state, '.message-thread-view-display-id', 'thread_view_id');
   }
+
   /**
    * AJAX function to get display IDs for a particular View.
    */
@@ -324,13 +326,6 @@ class MessageThreadTemplateForm extends EntityForm {
     $actions['submit']['#value'] = t('Save message thread template');
     $actions['delete']['#value'] = t('Delete message thread template');
     return $actions;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validate(array $form, FormStateInterface $form_state) {
-    parent::validate($form, $form_state);
   }
 
   /**
