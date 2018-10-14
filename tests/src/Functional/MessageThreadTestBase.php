@@ -40,33 +40,4 @@ abstract class MessageThreadTestBase extends BrowserTestBase {
     return MessageThreadTemplate::load($template);
   }
 
-  /**
-   * Return a config setting.
-   *
-   * @param string $config
-   *   The config value.
-   * @param string $storage
-   *   The storing of the configuration. Default to message.message.
-   *
-   * @return mixed
-   *   The value of the config.
-   */
-//  protected function getConfig($config, $storage = 'message_thread.settings') {
-//    return \Drupal::config($storage)->get($config);
-//  }
-
-  /**
-   * Set a config value.
-   *
-   * @param string $config
-   *   The config name.
-   * @param string $value
-   *   The config value.
-   * @param string $storage
-   *   The storing of the configuration. Default to message.message.
-   */
-//  protected function configSet($config, $value, $storage = 'message_thread.settings') {
-//    \Drupal::configFactory()->getEditable($storage)->set($config, $value);
-//  }
-
 }

@@ -3,4 +3,3 @@ thread-styles:
   css:
     component:
       css/message-thread.css: { }
-

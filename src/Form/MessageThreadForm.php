@@ -3,7 +3,6 @@
 namespace Drupal\message_thread\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Language\Language;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -31,7 +30,6 @@ class MessageThreadForm extends ContentEntityForm {
       '#weight' => 99,
     ];
 
-
     $form['owner'] = [
       '#type' => 'fieldset',
       '#title' => t('Owner information'),
@@ -58,67 +56,11 @@ class MessageThreadForm extends ContentEntityForm {
       $form['created']['#group'] = 'owner';
     }
 
-
-
-    // @todo: assess the best way to access and create tokens tab from D7.
-//    $tokens = $message_thread->getArguments();
-//
-//    $access = \Drupal::currentUser()->hasPermission('update tokens') || \Drupal::currentUser()->hasPermission('bypass message access control');
-//    if (!empty($tokens) && ($access)) {
-//      $form['tokens'] = [
-//        '#type' => 'fieldset',
-//        '#title' => t('Tokens and arguments'),
-//        '#collapsible' => TRUE,
-//        '#collapsed' => TRUE,
-//        '#group' => 'advanced',
-//        '#weight' => 110,
-//      ];
-//
-//      // Give the user an option to update the har coded tokens.
-//      $form['tokens']['replace_tokens'] = [
-//        '#type' => 'select',
-//        '#title' => t('Update tokens value automatically'),
-//        '#description' => t('By default, the hard coded values will be replaced automatically. If unchecked - you can update their value manually.'),
-//        '#default_value' => 'no_update',
-//        '#options' => [
-//          'no_update' => t("Don't update"),
-//          'update' => t('Update automatically'),
-//          'update_manually' => t('Update manually'),
-//        ],
-//      ];
-//
-//      $form['tokens']['values'] = [
-//        '#type' => 'container',
-//        '#states' => [
-//          'visible' => [
-//            ':input[name="replace_tokens"]' => ['value' => 'update_manually'],
-//          ],
-//        ],
-//      ];
-//
-//      // Build list of fields to update the tokens manually.
-//      foreach ($message_thread->getArguments() as $name => $value) {
-//        $form['tokens']['values'][$name] = [
-//          '#type' => 'textfield',
-//          '#title' => t("@name's value", ['@name' => $name]),
-//          '#default_value' => $value,
-//        ];
-//      }
-//    }
-//
-//    $form['langcode'] = [
-//      '#title' => $this->t('Language'),
-//      '#type' => 'language_select',
-//      '#default_value' => $message_thread->getUntranslated()->language()->getId(),
-//      '#languages' => Language::STATE_ALL,
-//    ];
-
     // @todo : add similar to node/from library, adding css for
     // 'message-form-owner' class.
     // $form['#attached']['library'][] = 'node/form';
     return $form;
   }
-
 
   /**
    * {@inheritdoc}
@@ -163,8 +105,8 @@ class MessageThreadForm extends ContentEntityForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    // Add owner as a  participant
-    // We do this before the parent::submit to ensure the value is saved
+    // Add owner as a  participant.
+    // We do this before the parent::submit to ensure the value is saved.
     $values = $form_state->getValues();;
     $found = FALSE;
     foreach ($values['field_thread_participants'] as $key => $participant) {
@@ -183,7 +125,7 @@ class MessageThreadForm extends ContentEntityForm {
     if (!$found) {
       $values['field_thread_participants'][] = [
         'target_id' => $values['uid'][0]['target_id'],
-        'weight' => 0
+        'weight' => 0,
       ];
       $form_state->setValue(['field_thread_participants'], $values['field_thread_participants']);
     }
@@ -194,7 +136,6 @@ class MessageThreadForm extends ContentEntityForm {
     $message_thread = $this->entity;
 
     // Set message owner.
-
     $uid = $form_state->getValue('uid');
     if (is_array($uid) && !empty($uid[0]['target_id'])) {
       $message_thread->setOwnerId($uid[0]['target_id']);
@@ -208,36 +149,6 @@ class MessageThreadForm extends ContentEntityForm {
     else {
       $message_thread->setCreatedTime(REQUEST_TIME);
     }
-//
-//    // Get the tokens to be replaced and prepare for replacing.
-//    $replace_tokens = $form_state->getValue('replace_tokens');
-//    $token_actions = empty($replace_tokens) ? [] : $replace_tokens;
-//
-//    // Get the message args and replace tokens.
-//    if ($args = $message_thread->getArguments()) {
-//
-//      if (!empty($token_actions) && $token_actions != 'no_update') {
-//
-//        // Loop through the arguments of the message.
-//        foreach (array_keys($args) as $token) {
-//
-//          if ($token_actions == 'update') {
-//            // Get the hard coded value of the message and him in the message.
-//            $token_name = str_replace(['@{', '}'], ['[', ']'], $token);
-//            $token_service = \Drupal::token();
-//            $value = $token_service->replace($token_name, ['message' => $message_thread]);
-//          }
-//          else {
-//            // Hard coded value given from the user.
-//            $value = $form_state->getValue($token);
-//          }
-//
-//          $args[$token] = $value;
-//        }
-//      }
-//    }
-//
-//    $this->entity->setArguments($args);
   }
 
   /**

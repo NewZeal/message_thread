@@ -3,10 +3,7 @@
 namespace Drupal\message_thread\Form;
 
 use Drupal\message_ui\Form\MessageForm as MessageMessageForm;
-use Drupal\Core\Language\Language;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
-use Drupal\Core\Url;
 
 /**
  * Form controller for the message_thread message entity edit forms.
@@ -39,49 +36,9 @@ class MessageForm extends MessageMessageForm {
 
   /**
    * {@inheritdoc}
-   *
-   * Updates the message object by processing the submitted values.
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Build the node object from the submitted values.
-    parent::submitForm($form, $form_state);
-
-    /* @var $message Message */
-    $message = $this->entity;
-    $values = $form_state->getValues();
-    return;
-    // Save the relationship between the thread and the message
-    db_insert('message_thread_index')
-      ->fields(
-        array(
-          'mid' => $values->nid,
-          'thread_id' => $values['thread_id'],
-          'created' => REQUEST_TIME
-        )
-      )->execute();
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
-    // Redirect to message view display if user has access.
-//    if ($message->id()) {
+  }
 
-      if ($message->access('view')) {
-        $form_state->setRedirect('entity.message.canonical', ['message' => $message->id()]);
-      }
-      else {
-        $form_state->setRedirect('<front>');
-      }
-      // @todo : for node they clear temp store here, but perhaps unused with
-      // message.
-//    }
-//    else {
-      // In the unlikely case something went wrong on save, the message will be
-      // rebuilt and message form redisplayed.
-      drupal_set_message(t('The message could not be saved.'), 'error');
-      $form_state->setRebuild();
-    }
 }

@@ -8,10 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandler;
 
 /**
- * Provides a 'Message History' Block with links to message thread
- * This block differs from the Private Messages New Messages block as follows:
- * - Links to the thread and not the message
- * - History is reset when viewing thread and not message
+ * Provides a 'Message History' Block with links to message thread.
+ *
+ * This block differs from the Private Messages New Messages block as follows.
+ * Links to the thread and not the message.
+ * History is reset when viewing thread and not message.
  *
  * @Block(
  *   id = "message_thread_new_message",
@@ -21,7 +22,7 @@ use Drupal\Core\Extension\ModuleHandler;
 class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The module handler
+   * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandler
    */
@@ -43,7 +44,6 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
   }
-
 
   /**
    * {@inheritdoc}
@@ -68,17 +68,17 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
     $children = [];
     $threads = [];
     foreach ($result as $row) {
-      // Find the message thread
+      // Find the message thread.
       $thread_id = message_thread_relationship($row->mid);
-      // Only add a thread once
+      // Only add a thread once.
       if (!in_array($thread_id, $threads)) {
         $children[$row->mid] = [
           'New message' => [
-            '#markup' => '<a href="/message/thread/' . $thread_id . '">'. $row->name . '</a>',
+            '#markup' => '<a href="/message/thread/' . $thread_id . '">' . $row->name . '</a>',
             '#wrapper_attributes' => [
               'class' => ['message-history-item'],
             ],
-          ]
+          ],
         ];
       }
       $threads[] = $thread_id;
@@ -86,25 +86,28 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
 
     if (empty($children)) {
       return [
-        '#markup' => t('You have no new messages')
+        '#markup' => t('You have no new messages'),
       ];
     }
     $items[] = [
       '#theme' => 'item_list',
       '#items' => $children,
       '#cache' => [
-        'max-age' => 0
-      ]
+        'max-age' => 0,
+      ],
     ];
 
     return $items;
   }
 
+  /**
+   * Get unread messages.
+   */
   protected function getUnreadMessages() {
-    // Find messages for the current user
+    // Find messages for the current user.
     return db_query("SELECT mfd.mid, mfd.uid, ufd.name
       FROM {message_field_data} mfd
-      LEFT JOIN {message__field_message_private_to_user} pu 
+      LEFT JOIN {message__field_message_private_to_user} pu
       ON mfd.mid = pu.entity_id
       LEFT JOIN {users_field_data} ufd
       ON mfd.uid = ufd.uid
@@ -113,17 +116,20 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
         WHERE  mfd.mid = message_history.mid
         AND message_history.uid = :uid
       )
-      AND pu.field_message_private_to_user_target_id = :uid 
+      AND pu.field_message_private_to_user_target_id = :uid
       AND mfd.created > :limit
       AND mfd.uid != :uid", [
-      ':uid' => \Drupal::currentUser()->id(),
-      ':limit' => HISTORY_READ_LIMIT
-    ]);
+        ':uid' => \Drupal::currentUser()->id(),
+        ':limit' => HISTORY_READ_LIMIT,
+      ]);
   }
 
+  /**
+   * Warning display.
+   */
   protected function messageHistoryModuleRequired() {
     return [
-      '#markup' => t('Enable Message History Module to display New Messages block')
+      '#markup' => t('Enable Message History Module to display New Messages block'),
     ];
   }
 

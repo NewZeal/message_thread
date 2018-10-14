@@ -6,7 +6,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\message_private\MessagePrivateAccessControlHandler;
 
 /**
  * Access controller for the comment entity.
@@ -33,7 +32,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\Core\Access\AccessResult[] $results */
     $results = $this
       ->moduleHandler()
-      ->invokeAll('message_thread_access_control', array($params));
+      ->invokeAll('message_thread_access_control', [$params]);
 
     foreach ($results as $result) {
       if ($result->isNeutral()) {
@@ -45,7 +44,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
 
     $current_id = $account->id();
     $allow = [];
-    // Allow all participants to view
+    // Allow all participants to view.
     if ($operation == 'view' && $entity->get('field_thread_participants')->getValue() != NULL) {
       if (AccessResult::allowedIfHasPermission($account, 'view own messages')) {
         $participants = $entity->get('field_thread_participants')->getValue();
@@ -57,7 +56,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
         }
       }
     }
-    // Allow author of thread to edit and delete
+    // Allow author of thread to edit and delete.
     if ($entity->get('uid')->getValue() != NULL) {
       switch ($operation) {
 
@@ -88,7 +87,9 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     if (in_array($current_id, $allow)) {
       return AccessResult::allowed();
     }
-    else return AccessResult::forbidden();
+    else {
+      return AccessResult::forbidden();
+    }
   }
 
   /**
@@ -104,15 +105,18 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     }
 
     /** @var \Drupal\Core\Access\AccessResult[] $results */
-    $results = $this->moduleHandler()->invokeAll('message_thread_create_access_control', [$entity_bundle,
-      $account]);
+    $results = $this->moduleHandler()->invokeAll('message_thread_create_access_control', [
+      $entity_bundle,
+      $account,
+    ]);
 
     foreach ($results as $result) {
       if ($result->isNeutral()) {
         continue;
       }
 
-      // We only return this if a result is not neutral, meaning that this hook overrides the default
+      // We only return this if a result is not neutral,
+      // meaning that this hook overrides the default.
       return $result;
     }
 
@@ -122,7 +126,8 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
         ->cachePerPermissions();
     }
 
-    // With no bundle, e.g. on message thread/add, check access to any message thread bundle.
+    // With no bundle, e.g. on message thread/add,
+    // check access to any message thread bundle.
     // @todo: perhaps change this method to a service as in NodeAddAccessCheck.
     foreach (\Drupal::entityManager()->getStorage('message_thread_template')->loadMultiple() as $template) {
       $access = AccessResult::allowedIfHasPermission($account, 'create and receive ' . $template->id() . ' message threads');

@@ -16,46 +16,45 @@ class MessageThreadStorageSchema extends SqlContentEntityStorageSchema {
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE) {
     $schema = parent::getEntitySchema($entity_type, $reset = FALSE);
 
-
-    $schema['message_thread_index'] = array(
+    $schema['message_thread_index'] = [
       'description' => 'Maintains denormalized information about thread/message relationships.',
-      'fields' => array(
-        'mid' => array(
+      'fields' => [
+        'mid' => [
           'description' => 'The {message}.mid this record tracks.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
           'default' => 0,
-        ),
-        'thread_id' => array(
+        ],
+        'thread_id' => [
           'description' => 'The thread ID.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
           'default' => 0,
-        ),
-        'created' => array(
+        ],
+        'created' => [
           'description' => 'The Unix timestamp when the message was created.',
           'type' => 'int',
           'not null' => TRUE,
           'default' => 0,
-        ),
-      ),
-      'primary key' => array('mid', 'thread_id'),
-      'indexes' => array(
-        'thread_message' => array('thread_id', 'created'),
-      ),
-      'foreign keys' => array(
-        'tracked_message' => array(
+        ],
+      ],
+      'primary key' => ['mid', 'thread_id'],
+      'indexes' => [
+        'thread_message' => ['thread_id', 'created'],
+      ],
+      'foreign keys' => [
+        'tracked_message' => [
           'table' => 'message',
-          'columns' => array('mid' => 'mid'),
-        ),
-        'term' => array(
+          'columns' => ['mid' => 'mid'],
+        ],
+        'term' => [
           'table' => 'message_field_data',
-          'columns' => array('mid' => 'mid'),
-        ),
-      ),
-    );
+          'columns' => ['mid' => 'mid'],
+        ],
+      ],
+    ];
 
     return $schema;
   }

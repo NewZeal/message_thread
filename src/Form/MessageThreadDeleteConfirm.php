@@ -47,5 +47,4 @@ class MessageThreadDeleteConfirm extends ContentEntityConfirmFormBase {
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 
-
 }
