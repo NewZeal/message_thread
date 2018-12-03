@@ -18,7 +18,7 @@ abstract class MessageThreadTestBase extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['message_thread', 'views'];
+  public static $modules = ['message_thread', 'views', 'message_history'];
 
   /**
    * The node access controller.

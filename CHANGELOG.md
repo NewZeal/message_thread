@@ -65,5 +65,13 @@ Create / fix message thread overview page https://www.drupal.org/project/message
 8.x-1.0-beta7
 Apply configurable display fields: https://www.drupal.org/project/message_thread/issues/2998013
 
+8.x-1.0-beta7
+Thread label Caps https://www.drupal.org/project/message_thread/issues/3006190
+Dependency namespacing https://www.drupal.org/project/message_thread/issues/3003252
+Conversation action link https://www.drupal.org/project/message_thread/issues/3003037
+Core version in .info file https://www.drupal.org/project/message_thread/issues/3002777
+Readme layout https://www.drupal.org/project/message_thread/issues/2971498
+Add travis script and fix drupal standards
+
 TodDo
 Delete messages in thread when thread is deleted
