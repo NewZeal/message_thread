@@ -10,6 +10,7 @@
     "php": "^5.5|^7.0",
     "drupal/core": "^8.6",
     "drupal/message": "^1.0",
+    "drupal/message_history": "^1.0",
     "drupal/message_notify": "^1.0",
     "drupal/message_ui": "^1.0",
     "drupal/message_private": "^1.0"
