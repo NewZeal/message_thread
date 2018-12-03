@@ -11,6 +11,7 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\message_thread\Entity\MessageThread;
+use Drupal\message\Entity\Message;
 
 /**
  * Drupal\message_thread\MessageStatistics.
@@ -87,8 +88,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function delete(EntityInterface $entity)
-  {
+  public function delete(EntityInterface $entity) {
     $this->database->delete('message_thread_statistics')
       ->condition('entity_id', $entity->id())
       ->condition('entity_type', $entity->getEntityTypeId())
@@ -98,7 +98,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function create(FieldableEntityInterface $entity, $fields)
+  public function create(FieldableEntityInterface $entity)
   {
     $query = $this->database->insert('message_thread_statistics')
       ->fields([
@@ -181,7 +181,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function update(MessageInterface $message)
+  public function update(Message $message)
   {
     $thread_id = message_thread_relationship($message->id());
     if (!$thread_id) {
@@ -193,23 +193,21 @@ class MessageStatistics implements MessageStatisticsInterface {
     if (!$this->state->get('message.maintain_entity_statistics')) {
       return;
     }
-
-
     $query = $this->database->select('message_field_data', 'm');
-    $query->addExpression('COUNT(mid)');
-    $count = $query->condition('m.entity_id', $message->id())
-      ->condition('m.entity_type', $message->getEntityTypeId())
-      ->condition('default_langcode', 1)
+    $query->join('message_thread_index', 'i', 'm.mid=i.mid');
+    $query->addExpression('COUNT(m.mid)');
+    $count = $query->condition('i.thread_id', $thread_id)
+      ->condition('m.default_langcode', 1)
       ->execute()
       ->fetchField();
 
     if ($count > 0) {
       // Messages exist.
-      $last_reply = $this->database->select('message_field_data', 'm')
-        ->fields('m', ['mid', 'created', 'uid'])
-        ->condition('m.entity_id', $message->id())
-        ->condition('m.entity_type', $message->getEntityTypeId())
-        ->condition('default_langcode', 1)
+      $query = $this->database->select('message_field_data', 'm');
+      $query->join('message_thread_index', 'i', 'm.mid=i.mid');
+      $last_reply = $query->fields('m', ['mid', 'created', 'uid'])
+        ->condition('i.thread_id', $thread_id)
+        ->condition('m.default_langcode', 1)
         ->orderBy('m.created', 'DESC')
         ->range(0, 1)
         ->execute()
@@ -217,6 +215,7 @@ class MessageStatistics implements MessageStatisticsInterface {
       // Use merge here because entity could be created before comment field.
       $this->database->merge('message_thread_statistics')
         ->fields([
+
           'mid' => $last_reply->mid,
           'message_count' => $count,
           'last_message_timestamp' => $last_reply->created,
@@ -224,8 +223,8 @@ class MessageStatistics implements MessageStatisticsInterface {
           'last_message_uid' => $last_reply->uid,
         ])
         ->keys([
-          'entity_id' => $message->id(),
-          'entity_type' => $message->getEntityTypeId(),
+          'entity_id' => $thread_id,
+          'entity_type' => $message_thread->getEntityTypeId(),
         ])
         ->execute();
     } else {
@@ -251,8 +250,8 @@ class MessageStatistics implements MessageStatisticsInterface {
           'last_message_name' => '',
           'last_message_uid' => $last_message_uid,
         ])
-        ->condition('entity_id', $message->id())
-        ->condition('entity_type', $message->getEntityTypeId())
+        ->condition('entity_id', $thread_id)
+        ->condition('entity_type', $message_thread->getEntityTypeId())
         ->execute();
     }
 

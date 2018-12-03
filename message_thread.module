@@ -22,6 +22,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Xss;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResultForbidden;
+use function Drupal\blazy_ui\Form\drupal_set_message;
 
 /**
  * Implements hook_installed().
@@ -120,6 +121,7 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
  * Submit handler.
  */
 function message_thread_submit_message(array &$form, FormStateInterface $form_state) {
+
   $thread_id = $form_state->getValue('message_thread');
   // Save the relationship between the thread and the message.
   db_insert('message_thread_index')
@@ -135,6 +137,14 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
   $params = [
     'message_thread' => $thread_id,
   ];
+  // Update statistics.
+  $entity = $form_state->getFormObject()->getEntity();
+  \Drupal::service('message.statistics')->update($entity);
+  
+  // Redirect to the thread not the message
+  $params = array(
+    'message_thread' => $thread_id
+  );
   $url = Url::fromRoute('entity.message_thread.canonical', $params);
   $form_state->setRedirectUrl($url);
 }
@@ -466,7 +476,6 @@ function message_thread_message_delete(EntityInterface $entity) {
   // Delete from index when deleting a private message.
   switch ($entity->getTemplate()->id()) {
     case 'private_message':
-      drupal_set_message(t('Deleting index'));
       db_delete('message_thread_index', ['mid' => $entity->id()]);
       break;
   }
@@ -632,4 +641,64 @@ function message_thread_theme_suggestions_message_thread(array $variables) {
   $suggestions[] = 'message_thread__' . $message_thread->id() . '__' . $sanitized_view_mode;
 
   return $suggestions;
+}
+
+/**
+ * Implements hook_entity_storage_load().
+ *
+ * @see \Drupal\comment\Plugin\Field\FieldType\CommentItem::propertyDefinitions()
+ */
+function message_thread_entity_storage_load($entities, $entity_type)
+{
+  // Messages can only be attached to message entities, so skip others.
+  if (!\Drupal::entityManager()->getDefinition($entity_type)->entityClassImplements(FieldableEntityInterface::class)) {
+    return;
+  }
+
+  // Load comment information from the database and update the entity's
+  // comment statistics properties, which are defined on each CommentItem field.
+  $result = \Drupal::service('message.statistics')->read($entities, $entity_type);
+  foreach ($result as $record) {
+    // Skip fields that entity does not have.
+    if (!$entities[$record->entity_id]->hasField($record->field_name)) {
+      continue;
+    }
+    $message_statistics = $entities[$record->entity_id]->get($record->field_name);
+    $message_statistics->cid = $record->cid;
+    $message_statistics->last_message_timestamp = $record->last_message_timestamp;
+    $message_statistics->last_message_name = $record->last_message_name;
+    $message_statistics->last_message_uid = $record->last_message_uid;
+    $message_statistics->message_count = $record->message_count;
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function message_thread_entity_insert(EntityInterface $entity) {
+  // On insert of a message thread create the statistics entry.
+  switch ($entity->getEntityType()->id()) {
+    case 'message_thread':
+      if (!\Drupal::state()->get('message.maintain_entity_statistics')) {
+        return;
+      }
+      \Drupal::service('message.statistics')->create($entity);
+      break;
+
+  }
+}
+
+/**
+ * Implements hook_entity_predelete().
+ */
+function message_thread_entity_predelete(EntityInterface $entity) {
+  switch ($entity->getEntityTypeId()) {
+    case 'message_thread':
+      \Drupal::service('message.statistics')->delete($entity);
+      break;
+
+    case 'message':
+      \Drupal::service('message.statistics')->update($entity);
+      break;
+  }
 }

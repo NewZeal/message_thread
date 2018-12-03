@@ -4,6 +4,7 @@ namespace Drupal\message_thread;
 
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\message\Entity\Message;
 
 /**
  * Provides an interface for storing and retrieving message statistics.
@@ -48,10 +49,10 @@ interface MessageStatisticsInterface {
   /**
    * Update or insert message statistics records after a message is added.
    *
-   * @param \Drupal\message_thread\MessageInterface $message
+   * @param \Drupal\message\Entity\Message $message
    *   The message added or updated.
    */
-  public function update(MessageInterface $message);
+  public function update(Message $message);
 
   /**
    * Find the maximum number of messages for the given entity type.
@@ -76,6 +77,6 @@ interface MessageStatisticsInterface {
    * @param array $fields
    *   Array of message field definitions for the given entity.
    */
-  public function create(FieldableEntityInterface $entity, $fields);
+  public function create(FieldableEntityInterface $entitys);
 
 }
