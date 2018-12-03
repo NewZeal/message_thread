@@ -119,7 +119,7 @@ class MessageThreadListBuilder extends EntityListBuilder {
       'template' => $entity->getTemplate()->label(),
       'author' => $entity->getOwner()->label(),
       'link' => render($link),
-      'edit' => render($edit),
+      'edit' => render($edit)
     ];
   }
 
