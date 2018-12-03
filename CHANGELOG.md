@@ -77,5 +77,8 @@ Add travis script and fix drupal standards
 Admin dashboard https://www.drupal.org/project/message_thread/issues/3006122
 Sort by latest thread or message https://www.drupal.org/project/message_thread/issues/3001848
 
+8.x-1.0-beta9
+
+
 TodDo
 Delete messages in thread when thread is deleted
