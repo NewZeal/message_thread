@@ -13,6 +13,9 @@ use Drupal\views\Plugin\views\field\Date;
  */
 class StatisticsLastUpdated extends Date {
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     $this->ensureMyTable();
     $this->thread_table = $this->query->ensureTable('message_thread_field_data', $this->relationship);

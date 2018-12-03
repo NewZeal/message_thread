@@ -8,7 +8,7 @@ use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
 
 /**
- * Field handler to display the timestamp of a message with the count of messages.
+ * Field handler to display the timestamp and count of messages.
  *
  * @ingroup views_field_handlers
  *

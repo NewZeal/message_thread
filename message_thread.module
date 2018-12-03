@@ -139,11 +139,11 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
   // Update statistics.
   $entity = $form_state->getFormObject()->getEntity();
   \Drupal::service('message.statistics')->update($entity);
-  
-  // Redirect to the thread not the message
-  $params = array(
-    'message_thread' => $thread_id
-  );
+
+  // Redirect to the thread not the message.
+  $params = [
+    'message_thread' => $thread_id,
+  ];
   $url = Url::fromRoute('entity.message_thread.canonical', $params);
   $form_state->setRedirectUrl($url);
 }

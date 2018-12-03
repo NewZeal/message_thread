@@ -62,13 +62,14 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
       ],
     ];
 
-    // Define the base group of this table. Fields that don't have a group defined
+    // Define the base group of this table.
+    // Fields that don't have a group defined
     // will go into this field by default.
     $data['message_thread_statistics']['table']['group'] = $this->t('Message Statistics');
 
     $data['message_thread_statistics']['table']['join'] = [
       'message_thread_field_data' => [
-        // links directly to message thread via thread_id
+        // Links directly to message thread via thread_id.
         'left_field' => 'thread_id',
         'field' => 'entity_id',
       ],
@@ -93,11 +94,11 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
       'help' => $this->t('The name of the author of the last posted message.'),
       'field' => [
         'id' => 'message_last_name',
-        'no group by' => true,
+        'no group by' => TRUE,
       ],
       'sort' => [
         'id' => 'message_last_name',
-        'no group by' => true,
+        'no group by' => TRUE,
       ],
     ];
 
@@ -123,11 +124,11 @@ class MessageThreadViewsData extends EntityViewsData implements EntityViewsDataI
       'help' => $this->t('The most recent of last message posted.'),
       'field' => [
         'id' => 'message_last_updated',
-        'no group by' => true,
+        'no group by' => TRUE,
       ],
       'sort' => [
         'id' => 'message_last_updated',
-        'no group by' => true,
+        'no group by' => TRUE,
       ],
       'filter' => [
         'id' => 'message_last_updated',

@@ -22,7 +22,7 @@ class StatisticsLastMessageName extends FieldPluginBase {
     // last_message_name only contains data if the user is anonymous. So we
     // have to join in a specially related user table.
     $this->ensureMyTable();
-    // join 'users' to this table via vid
+    // Join 'users' to this table via vid.
     $definition = [
       'table' => 'users_field_data',
       'field' => 'uid',
@@ -32,9 +32,9 @@ class StatisticsLastMessageName extends FieldPluginBase {
         [
           'field' => 'uid',
           'operator' => '!=',
-          'value' => '0'
-        ]
-      ]
+          'value' => '0',
+        ],
+      ],
     ];
     $join = \Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
 

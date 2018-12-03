@@ -77,6 +77,6 @@ interface MessageStatisticsInterface {
    * @param array $fields
    *   Array of message field definitions for the given entity.
    */
-  public function create(FieldableEntityInterface $entitys);
+  public function create(FieldableEntityInterface $entity);
 
 }
