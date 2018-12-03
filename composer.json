@@ -5,7 +5,7 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "homepage": "https://www.drupal.org/project/message_private",
+  "homepage": "https://www.drupal.org/project/message_thread",
   "require": {
     "php": "^5.5|^7.0",
     "drupal/core": "^8.6",
