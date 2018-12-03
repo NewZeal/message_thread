@@ -74,8 +74,6 @@ interface MessageStatisticsInterface {
    *
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   The created entity for which a statistics record is to be initialized.
-   * @param array $fields
-   *   Array of message field definitions for the given entity.
    */
   public function create(FieldableEntityInterface $entity);
 

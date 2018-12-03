@@ -58,8 +58,7 @@ class MessageStatistics implements MessageStatisticsInterface {
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(Connection $database, AccountInterface $current_user, EntityManagerInterface
-  $entity_manager, StateInterface $state) {
+  public function __construct(Connection $database, AccountInterface $current_user, EntityManagerInterface $entity_manager, StateInterface $state) {
     $this->database = $database;
     $this->currentUser = $current_user;
     $this->entityManager = $entity_manager;
@@ -132,7 +131,7 @@ class MessageStatistics implements MessageStatisticsInterface {
       'entity_type' => $entity->getEntityTypeId(),
       'mid' => 0,
       'last_message_timestamp' => $last_message_timestamp,
-      'last_message_name' => null,
+      'last_message_name' => NULL,
       'last_message_uid' => $last_message_uid,
       'message_count' => 0,
     ]);
