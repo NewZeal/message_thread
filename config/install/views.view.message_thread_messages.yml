@@ -9,8 +9,6 @@ dependencies:
     - message_thread
     - message_ui
     - user
-_core:
-  default_config_hash: DOOWzqkXI77o2Q96QVFt65R_TVHiRqAJrWPp7JfWA0I
 id: message_thread_messages
 label: 'Message Thread Messages'
 module: views
@@ -294,22 +292,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: timestamp
-          settings:
-            date_format: fallback
-            custom_date_format: ''
-            timezone: ''
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: 0
           date_format: fallback
           custom_date_format: ''
           timezone: ''
@@ -364,7 +346,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          link_to_message: 0
           plugin_id: message_history_timestamp
         message_ui_contextual_links:
           id: message_ui_contextual_links

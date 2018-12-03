@@ -38,10 +38,6 @@ use Drupal\message_thread\MessageThreadTemplateInterface;
  *     "label",
  *     "langcode",
  *     "description",
- *     "message_template",
- *     "view_display",
- *     "view_display_id",
- *     "text",
  *     "settings",
  *     "status"
  *   }
