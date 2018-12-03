@@ -5,6 +5,91 @@
  * Message Thread un-installer.
  */
 
+use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_schema().
+ */
+function message_thread_schema() {
+
+  $schema['message_thread_statistics'] = [
+    'description' => 'Maintains statistics of message threads and messages to show "new" and "updated" flags.',
+    'fields' => [
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The entity_id of the entity for which the statistics are compiled.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar_ascii',
+        'not null' => TRUE,
+        'default' => 'message_thread',
+        'length' => EntityTypeInterface::ID_MAX_LENGTH,
+        'description' => 'The entity_type of the entity to which this message is a reply.',
+      ],
+      'field_name' => [
+        'type' => 'varchar_ascii',
+        'not null' => TRUE,
+        'default' => '',
+        'length' => FieldStorageConfig::NAME_MAX_LENGTH,
+        'description' => 'The field_name of the field that was used to add this message.',
+      ],
+      'mid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The {message}.mid of the last message.',
+      ],
+      'last_message_timestamp' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The Unix timestamp of the last message that was posted within this entity, from {message}.changed.',
+      ],
+      'last_message_name' => [
+        'type' => 'varchar',
+        'length' => 60,
+        'not null' => FALSE,
+        'description' => 'The name of the latest author to post a message on this message thread, from {message}.name.',
+      ],
+      'last_message_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The user ID of the latest author to post a message on this message thread, from {message}.uid.',
+      ],
+      'message_count' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The total number of messages on this entity.',
+      ],
+    ],
+    'primary key' => ['entity_id', 'entity_type', 'field_name'],
+    'indexes' => [
+      'last_message_timestamp' => ['last_message_timestamp'],
+      'message_count' => ['message_count'],
+      'last_message_uid' => ['last_message_uid'],
+    ],
+    'foreign keys' => [
+      'last_message_author' => [
+        'table' => 'users',
+        'columns' => [
+          'last_message_uid' => 'uid',
+        ],
+      ],
+    ],
+  ];
+
+  return $schema;
+}
+
 /**
  * Implements hook_uninstall().
  *
@@ -12,6 +97,7 @@
  */
 function message_thread_uninstall() {
   db_drop_table('message_thread_index');
+  db_drop_table('message_thread_statistics');
 }
 
 /**
@@ -58,4 +144,16 @@ function message_thread_update_8001() {
   $entity_definition_update_manager->updateFieldStorageDefinition($field_definition);
 
   $entity_definition_update_manager->applyUpdates();
+}
+
+/*
+ * Add new table for statistics.
+ */
+function message_thread_update_8002() {
+  if (db_table_exists('message_thread_statistics')) {
+    return;
+  }
+  $schema_manager = Database::getConnection()->schema();
+  $schema = drupal_get_module_schema('message_thread');
+  $schema_manager->createTable('message_thread_statistics', $schema['message_thread_statistics']);
 }
