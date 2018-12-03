@@ -2,11 +2,18 @@ langcode: en
 status: true
 dependencies: {  }
 template: conversation
-label: Messages
+label: Conversations
 description: 'Message thread to accompany Private Messages'
+message_template: null
+view_display: null
+view_display_id: null
+text: null
 settings:
   message_template: private_message
-  view_id: private_messages
-  view_display_id: block_1
   thread_view_id: conversations
   thread_view_display_id: page_1
+  view_id: message_thread_messages
+  view_display_id: block_1
+  'token options':
+    clear: false
+    'token replace': true
