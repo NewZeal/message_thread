@@ -8,8 +8,6 @@ dependencies:
   module:
     - message_thread
     - user
-_core:
-  default_config_hash: aRS7Mqf_xk1HwqOeqK7NTPslQUTaNXpSD4tzeCF2mKw
 id: conversations
 label: Messages
 module: views

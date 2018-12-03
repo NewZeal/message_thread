@@ -11,24 +11,6 @@ message_thread.template.*:
     description:
       type: text
       label: 'Description'
-    text:
-      type: sequence
-      label: 'Message Text'
-      sequence:
-        type: text_format
-        label: 'Text'
-    message_template:
-      type: string
-      label: 'Message Template'
-    view_id:
-      type: string
-      label: 'Messages View'
-    view_display_id:
-      type: string
-      label: 'Messages View Display'
-    view_display:
-      type: string
-      label: 'View Display'
     settings:
       type: mapping
       label: 'Settings'
