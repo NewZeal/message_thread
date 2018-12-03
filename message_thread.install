@@ -1,13 +1,21 @@
 <?php
-
 /**
  * @file
- * Message Thread un-installer.
+ * Message Thread installer.
  */
 
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_install().
+ */
+function message_thread_install() {
+  // By default, maintain entity statistics for messages.
+  // @see \Drupal\message_thread\MessageStatisticsInterface
+  \Drupal::state()->set('message.maintain_entity_statistics', true);
+}
 
 /**
  * Implements hook_schema().
@@ -91,9 +99,8 @@ function message_thread_schema() {
 }
 
 /**
- * Implements hook_uninstall().
- *
- * Remove the index table.
+ * Implements hook_uninstall.
+ * Remove the index table
  */
 function message_thread_uninstall() {
   db_drop_table('message_thread_index');

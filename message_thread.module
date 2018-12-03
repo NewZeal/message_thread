@@ -121,7 +121,6 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
  * Submit handler.
  */
 function message_thread_submit_message(array &$form, FormStateInterface $form_state) {
-
   $thread_id = $form_state->getValue('message_thread');
   // Save the relationship between the thread and the message.
   db_insert('message_thread_index')
@@ -304,7 +303,9 @@ function template_preprocess_message_thread(array &$variables) {
   /** @var \Drupal\message_thread\messageThreadInterface $message_thread */
   $message_thread = $variables['message_thread'];
   $variables['date'] = \Drupal::service('renderer')->render($variables['elements']['created']);
+  unset($variables['elements']['created']);
   $variables['author_name'] = \Drupal::service('renderer')->render($variables['elements']['uid']);
+  unset($variables['elements']['uid']);
 
   $variables['url'] = $message_thread->url('canonical', [
     'language' => $message_thread->language(),
@@ -345,6 +346,20 @@ function message_thread_entity_extra_field_info() {
     $extra_fields['message_thread'][$machine_name]['display']['message_thread_reply_form'] = [
       'label' => t('Reply Form'),
       'description' => t('Reply to this thread using embedded form'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['uid'] = [
+      'label' => t('Author'),
+      'description' => t('Creator of this thread'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['created'] = [
+      'label' => t('Created'),
+      'description' => t('Date this thread was created'),
       'weight' => 0,
       'visible' => FALSE,
     ];
@@ -476,6 +491,7 @@ function message_thread_message_delete(EntityInterface $entity) {
   // Delete from index when deleting a private message.
   switch ($entity->getTemplate()->id()) {
     case 'private_message':
+      drupal_set_message(t('Deleting index'));
       db_delete('message_thread_index', ['mid' => $entity->id()]);
       break;
   }
@@ -641,35 +657,6 @@ function message_thread_theme_suggestions_message_thread(array $variables) {
   $suggestions[] = 'message_thread__' . $message_thread->id() . '__' . $sanitized_view_mode;
 
   return $suggestions;
-}
-
-/**
- * Implements hook_entity_storage_load().
- *
- * @see \Drupal\comment\Plugin\Field\FieldType\CommentItem::propertyDefinitions()
- */
-function message_thread_entity_storage_load($entities, $entity_type)
-{
-  // Messages can only be attached to message entities, so skip others.
-  if (!\Drupal::entityManager()->getDefinition($entity_type)->entityClassImplements(FieldableEntityInterface::class)) {
-    return;
-  }
-
-  // Load comment information from the database and update the entity's
-  // comment statistics properties, which are defined on each CommentItem field.
-  $result = \Drupal::service('message.statistics')->read($entities, $entity_type);
-  foreach ($result as $record) {
-    // Skip fields that entity does not have.
-    if (!$entities[$record->entity_id]->hasField($record->field_name)) {
-      continue;
-    }
-    $message_statistics = $entities[$record->entity_id]->get($record->field_name);
-    $message_statistics->cid = $record->cid;
-    $message_statistics->last_message_timestamp = $record->last_message_timestamp;
-    $message_statistics->last_message_name = $record->last_message_name;
-    $message_statistics->last_message_uid = $record->last_message_uid;
-    $message_statistics->message_count = $record->message_count;
-  }
 }
 
 /**
