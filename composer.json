@@ -10,10 +10,11 @@
     "php": "^5.5|^7.0",
     "drupal/core": "^8.6",
     "drupal/message": "^1.0",
-    "drupal/message_history": "^1.0",
+    "drupal/message_history": "dev-1.x",
     "drupal/message_notify": "^1.0",
     "drupal/message_ui": "^1.0",
-    "drupal/message_private": "^1.0"
+    "drupal/message_private": "^1.0",
+    "drupal/message_thread_history": "1.0-alpha1"
   },
   "require-dev": {
     "composer/installers": "^1.2",
