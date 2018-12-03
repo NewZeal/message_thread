@@ -22,6 +22,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Xss;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResultForbidden;
+use function Drupal\blazy_ui\Form\drupal_set_message;
 
 /**
  * Implements hook_installed().
@@ -130,6 +131,14 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
         'created' => REQUEST_TIME,
       ]
     )->execute();
+
+  // Redirect to the thread not the message.
+  $params = [
+    'message_thread' => $thread_id,
+  ];
+  // Update statistics.
+  $entity = $form_state->getFormObject()->getEntity();
+  \Drupal::service('message.statistics')->update($entity);
 
   // Redirect to the thread not the message.
   $params = [
@@ -294,7 +303,9 @@ function template_preprocess_message_thread(array &$variables) {
   /** @var \Drupal\message_thread\messageThreadInterface $message_thread */
   $message_thread = $variables['message_thread'];
   $variables['date'] = \Drupal::service('renderer')->render($variables['elements']['created']);
+  unset($variables['elements']['created']);
   $variables['author_name'] = \Drupal::service('renderer')->render($variables['elements']['uid']);
+  unset($variables['elements']['uid']);
 
   $variables['url'] = $message_thread->url('canonical', [
     'language' => $message_thread->language(),
@@ -335,6 +346,20 @@ function message_thread_entity_extra_field_info() {
     $extra_fields['message_thread'][$machine_name]['display']['message_thread_reply_form'] = [
       'label' => t('Reply Form'),
       'description' => t('Reply to this thread using embedded form'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['uid'] = [
+      'label' => t('Author'),
+      'description' => t('Creator of this thread'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $extra_fields['message_thread'][$machine_name]['display']['created'] = [
+      'label' => t('Created'),
+      'description' => t('Date this thread was created'),
       'weight' => 0,
       'visible' => FALSE,
     ];
@@ -632,4 +657,35 @@ function message_thread_theme_suggestions_message_thread(array $variables) {
   $suggestions[] = 'message_thread__' . $message_thread->id() . '__' . $sanitized_view_mode;
 
   return $suggestions;
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function message_thread_entity_insert(EntityInterface $entity) {
+  // On insert of a message thread create the statistics entry.
+  switch ($entity->getEntityType()->id()) {
+    case 'message_thread':
+      if (!\Drupal::state()->get('message.maintain_entity_statistics')) {
+        return;
+      }
+      \Drupal::service('message.statistics')->create($entity);
+      break;
+
+  }
+}
+
+/**
+ * Implements hook_entity_predelete().
+ */
+function message_thread_entity_predelete(EntityInterface $entity) {
+  switch ($entity->getEntityTypeId()) {
+    case 'message_thread':
+      \Drupal::service('message.statistics')->delete($entity);
+      break;
+
+    case 'message':
+      \Drupal::service('message.statistics')->update($entity);
+      break;
+  }
 }
