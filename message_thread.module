@@ -17,7 +17,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
 use Drupal\Core\Access\AccessResult;
-use Drupal\message_private\MessagePrivateAccessControlHandler;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Xss;
@@ -429,7 +428,7 @@ function message_thread_reply_link($entity, $component) {
   $options = [
     'query' => [
       'destination' => '/message/thread/' . $entity->id(),
-    ]
+    ],
   ];
   $url = Url::fromRoute('message_thread.reply', $params, $options);
   return [
@@ -491,7 +490,6 @@ function message_thread_message_count($entity) {
  */
 function message_thread_add_message_form_submit(&$form, FormStateInterface &$form_state) {
   $values = $form_state->getValues();
-  return;
 }
 
 /**
@@ -535,7 +533,7 @@ function message_thread_entity_base_field_info_alter(&$fields, EntityTypeInterfa
  * Implements hook_local_tasks_alter().
  */
 function message_thread_local_tasks_alter(&$local_tasks) {
-  //We no longer need the private message local task on the user page.
+  // We no longer need the private message local task on the user page.
   unset($local_tasks['message_private.messages']);
 }
 
@@ -543,6 +541,7 @@ function message_thread_local_tasks_alter(&$local_tasks) {
  * Views Plugin access callback.
  *
  * @return \Drupal\Core\Access\AccessResult
+ *   Whether or not to allow access.
  */
 function message_thread_tab_access_check() {
   $account = \Drupal::currentUser();

@@ -3,9 +3,6 @@
 namespace Drupal\message_thread\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Language\Language;
-use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message_thread\MessageThreadTemplateInterface;
 
 /**
@@ -263,23 +260,6 @@ class MessageThreadTemplate extends ConfigEntityBundleBase implements MessageThr
    */
   public function isLocked() {
     return !$this->isNew();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageTemplateInterface
-   *   A message template thread object ready to be save.
-   */
-  public static function create(array $values = []) {
-    return parent::create($values);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
   }
 
 }

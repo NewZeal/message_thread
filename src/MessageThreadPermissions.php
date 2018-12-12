@@ -53,8 +53,10 @@ class MessageThreadPermissions implements ContainerInjectionInterface {
           'title' => $this->t('Able to participate in %thread threads', ['%thread' => $template->label()]),
         ],
         'view own ' . $template->id() . ' message thread tab' => [
-          'title' => $this->t('View own %thread tab', ['%thread' => $template->label()])
-        ]
+          'title' => $this->t('View own %thread tab', [
+            '%thread' => $template->label(),
+          ]),
+        ],
       ];
     }
 

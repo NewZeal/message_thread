@@ -91,10 +91,12 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   }
 
   /**
-   * Generates form output for adding a new message entity inside a thread
+   * Generates form output for adding a new message entity inside a thread.
    *
    * @param string $message_template
    *   The message template name.
+   * @param string $message_thread
+   *   The message thread id.
    *
    * @return array
    *   An array as expected by drupal_render().
@@ -137,7 +139,7 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   /**
    * Generates output of all threads belonging to the current user.
    *
-   * @return
+   * @return array
    *   A render array for a list of the messages.
    */
   public function inBox() {
@@ -181,7 +183,7 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
       $url = Url::fromRoute('message.template_add');
       return [
         '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' .
-          $url->getInternalPath() . '">sending a message to someone</a>.',
+        $url->getInternalPath() . '">sending a message to someone</a>.',
       ];
     }
   }
@@ -189,21 +191,18 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   /**
    * Message thread title.
    *
-   * @param \Drupal\message_thread\Entity\MessageThread|NULL $message_thread
+   * @param \Drupal\message_thread\Entity\MessageThread $message_thread
    *   Message thread object.
    *
    * @return array|string
    *   Markup.
    */
-  function messageThreadTitle(MessageThread $message_thread = NULL) {
+  public function messageThreadTitle(MessageThread $message_thread = NULL) {
     return $message_thread ? ['#markup' => $message_thread->get('field_thread_title')->getValue()[0]['value'], '#allowed_tags' => Xss::getHtmlTagList()] : '';
   }
 
   /**
    * Generates form output for adding a new message entity of message_template.
-   *
-   * @param \Drupal\message\MessageTemplateInterface $message_template
-   *   The message template object.
    *
    * @return array
    *   An array as expected by drupal_render().
@@ -222,7 +221,7 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     // No access.
     if (!$view->access($display_id)) {
       return [
-        '#markup' => t('You do not have access to this resource.')
+        '#markup' => t('You do not have access to this resource.'),
       ];
     }
 
@@ -248,7 +247,7 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     else {
       $url = Url::fromRoute('message.template_add');
       return [
-        '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' . $url->getInternalPath() . '">sending a message to someone</a>.'
+        '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' . $url->getInternalPath() . '">sending a message to someone</a>.',
       ];
     }
   }

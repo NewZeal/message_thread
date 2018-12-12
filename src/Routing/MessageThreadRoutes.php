@@ -3,9 +3,6 @@
 namespace Drupal\message_thread\Routing;
 
 use Drupal\Core\Entity\EntityTypeManager;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\views\Views;
 use Symfony\Component\Routing\Route;
@@ -20,16 +17,22 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
 
   /**
    * The template storage manager.
+   *
+   * @var Drupal\Core\Entity\EntityStorageInterface
    */
   protected $templateStorage;
 
   /**
    * The entity type manager.
+   *
+   * @var Drupal\Core\Entity\EntityTypeManager
    */
   protected $entityTypeManager;
 
   /**
    * The route provider.
+   *
+   * @var Drupal\Core\Routing\RouteProviderInterface
    */
   protected $routeProvider;
 
@@ -66,7 +69,8 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
 
       $settings = $template->getSettings();
 
-      // This is being called before the view route is being registered when the module is first installed
+      // This is being called before the view route is being registered
+      // when the module is first installed.
       // @todo is there are better way of handling this?
       $view_route = 'view.' . $settings['thread_view_id'] . '.' . $settings['thread_view_display_id'];
       $exists = count($this->routeProvider->getRoutesByNames([$view_route])) === 1;
@@ -88,7 +92,7 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
           '_title' => $template->label(),
         ],
         [
-          '_permission' => 'create and receive ' . $template->id() . ' message threads'
+          '_permission' => 'create and receive ' . $template->id() . ' message threads',
         ]
       );
       $route_collection->add('message_thread.' . $template->id(), $route);

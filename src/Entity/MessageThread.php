@@ -7,10 +7,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Language\Language;
-use Drupal\Core\Render\Markup;
 use Drupal\message\MessageException;
-use Drupal\message\MessageInterface;
-use Drupal\message\MessageThreadTemplateInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -183,21 +180,21 @@ class MessageThread extends ContentEntityBase {
         'default_value' => 0,
         'handler' => 'default',
       ])
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'author',
         'weight' => -3,
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => 60,
           'autocomplete_type' => 'tags',
           'placeholder' => '',
-        ),
+        ],
         'weight' => -3,
-      ))
+      ])
       ->setDefaultValueCallback('Drupal\message\Entity\Message::getCurrentUserId')
       ->setDisplayConfigurable('view', TRUE)
       ->setTranslatable(TRUE);
@@ -317,36 +314,6 @@ class MessageThread extends ContentEntityBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageInterface
-   *   A message entity ready to be save.
-   */
-  public static function create(array $values = []) {
-    return parent::create($values);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageInterface
-   *   A requested message entity.
-   */
-  public static function load($id) {
-    return parent::load($id);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\message\MessageInterface[]
-   *   Array of requested message entities.
-   */
-  public static function loadMultiple(array $ids = NULL) {
-    return parent::loadMultiple($ids);
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public static function deleteMultiple(array $ids) {
     \Drupal::entityTypeManager()->getStorage('message_thread')->delete($ids);
@@ -381,7 +348,7 @@ class MessageThread extends ContentEntityBase {
    *   An array of default values.
    */
   public static function getCurrentUserId() {
-    return array(\Drupal::currentUser()->id());
+    return [\Drupal::currentUser()->id()];
   }
 
 }

@@ -14,7 +14,8 @@
     "drupal/message_notify": "^1.0",
     "drupal/message_ui": "^1.0",
     "drupal/message_private": "^1.0",
-    "drupal/message_thread_history": "1.0-alpha1"
+    "drupal/message_thread_history": "1.0-alpha1",
+    "squizlabs/php_codesniffer": "*"
   },
   "require-dev": {
     "composer/installers": "^1.2",
