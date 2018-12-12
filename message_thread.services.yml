@@ -3,3 +3,10 @@ services:
     class: Drupal\message_thread\Plugin\Breadcrumbs\MessageThreadBreadcrumbs
     tags:
       - { name: breadcrumb_builder, priority: 1020 }
+
+  message.statistics:
+    class: Drupal\message_thread\MessageStatistics
+    arguments: ['@database', '@current_user', '@entity.manager', '@state']
+    tags:
+      - { name: backend_overridable }
+

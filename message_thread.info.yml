@@ -5,6 +5,6 @@ package: Message
 type: module
 configure: message_thread.admin_settings
 dependencies:
-  - views
-  - message_private
-  - message_history
+  - drupal:views
+  - message_private:message_private
+  - message_history:message_history

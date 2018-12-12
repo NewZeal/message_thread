@@ -128,5 +128,12 @@ message_thread.reply:
       message_template:
         with_config_overrides: FALSE
 
+message_thread.multiple_delete_confirm:
+  path: '/admin/content/message-thread/delete'
+  defaults:
+    _form: '\Drupal\message_thread\Form\DeleteMultiple'
+  requirements:
+    _permission: 'administer message threads'
+
 route_callbacks:
   - 'Drupal\message_thread\Routing\MessageThreadRoutes::routes'

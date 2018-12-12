@@ -124,6 +124,10 @@ function message_thread_submit_message(array &$form, FormStateInterface $form_st
       )
     )->execute();
 
+  // Update statistics.
+  $entity = $form_state->getFormObject()->getEntity();
+  \Drupal::service('message.statistics')->update($entity);
+
   // Redirect to the thread not the message
   $params = array(
     'message_thread' => $thread_id
@@ -619,4 +623,35 @@ function message_thread_theme_suggestions_message_thread(array $variables) {
   $suggestions[] = 'message_thread__' . $message_thread->id() . '__' . $sanitized_view_mode;
 
   return $suggestions;
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function message_thread_entity_insert(EntityInterface $entity) {
+  // On insert of a message thread create the statistics entry.
+  switch ($entity->getEntityType()->id()) {
+    case 'message_thread':
+      if (!\Drupal::state()->get('message.maintain_entity_statistics')) {
+        return;
+      }
+      \Drupal::service('message.statistics')->create($entity);
+      break;
+
+  }
+}
+
+/**
+ * Implements hook_entity_predelete().
+ */
+function message_thread_entity_predelete(EntityInterface $entity) {
+  switch ($entity->getEntityTypeId()) {
+    case 'message_thread':
+      \Drupal::service('message.statistics')->delete($entity);
+      break;
+
+    case 'message':
+      \Drupal::service('message.statistics')->update($entity);
+      break;
+  }
 }
