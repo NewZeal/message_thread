@@ -19,8 +19,9 @@ class MessageThreadTemplateSuggestionsTest extends MessageThreadTestBase {
   private $user;
 
   /**
-   * Currently experiencing schema errors
+   * Currently experiencing schema errors.
    *
+   * @var strictConfigSchema
    */
   protected $strictConfigSchema = FALSE;
 

@@ -24,8 +24,9 @@ class MessageThreadTextHandlerTest extends MessageThreadTestBase {
   public static $modules = ['filter_test'];
 
   /**
-   * Currently experiencing schema errors
+   * Currently experiencing schema errors.
    *
+   * @var strictConfigSchema
    */
   protected $strictConfigSchema = FALSE;
 
