@@ -234,8 +234,8 @@ function message_thread_preprocess_links(&$variables) {
       }
       $operation = strtolower($link['link']['#title']->__toString());
       if (substr($route_name, 0, 15) == 'entity.message.') {
-        //        $message_access_manager = new MessagePrivateAccessControlHandler($entity->getEntityType());.
-        //        $access = $message_access_manager->checkAccess($entity, $operation, $account);.
+        // $message_access_manager = new MessagePrivateAccessControlHandler($entity->getEntityType());.
+        // $access = $message_access_manager->checkAccess($entity, $operation, $account);.
         $access = message_private_message_access($entity, $operation, $account);
         // Disable link if user does not have access.
         if ($access instanceof AccessResultForbidden) {
@@ -383,7 +383,7 @@ function message_thread_entity_view_alter(array &$build, EntityInterface $entity
  * Helper function to display the messages as a View.
  *
  * @param array $settings
- *   message thread settings.
+ *   Message thread settings.
  *
  * @return array|bool|null
  *   The view or False.
@@ -399,7 +399,7 @@ function message_thread_get_messages_display(array $settings, $entity) {
   }
 
   $view->setDisplay($display_id);
-  $view->setArguments(array($entity->id()));
+  $view->setArguments([$entity->id()]);
   $view->build($display_id);
   $view->preExecute();
   $view->execute($display_id);
@@ -411,7 +411,7 @@ function message_thread_get_messages_display(array $settings, $entity) {
   return FALSE;
 }
 
-/*
+/**
  * Helper function to build the reply link.
  */
 function message_thread_reply_link($entity, $component) {
@@ -421,18 +421,18 @@ function message_thread_reply_link($entity, $component) {
   if ($count > 0) {
     $label = t('Reply');
   }
-  // Todo template should reference actual template
-  $params = array(
+  // Todo template should reference actual template.
+  $params = [
     'message_template' => 'private_message',
     'message_thread' => $entity->id(),
-  );
+  ];
   $options = [
     'query' => [
       'destination' => '/message/thread/' . $entity->id(),
     ]
   ];
   $url = Url::fromRoute('message_thread.reply', $params, $options);
-  return array(
+  return [
     '#type' => 'link',
     '#url' => $url,
     '#title' => $label,
@@ -440,11 +440,11 @@ function message_thread_reply_link($entity, $component) {
     '#attributes' => [
       'class' => ['message-thread-reply'],
     ],
-  );
+  ];
 }
 
 /**
- * Helper function to build the reply form
+ * Helper function to build the reply form.
  */
 function message_thread_reply_form($entity, $component) {
   $user = \Drupal::currentUser();
@@ -464,7 +464,7 @@ function message_thread_reply_form($entity, $component) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function message_thread_message_delete(Drupal\Core\Entity\EntityInterface $entity) {
+function message_thread_message_delete(EntityInterface $entity) {
   // Delete from index when deleting a private message.
   switch ($entity->getTemplate()->id()) {
     case 'private_message':
@@ -571,9 +571,8 @@ function message_thread_relationship($mid) {
   return $thread_id;
 }
 
-
 /**
- * Helper function to get all message ids in a thread
+ * Helper function to get all message ids in a thread.
  */
 function message_thread_get_messages($thread_id) {
   $result = db_select('message_thread_index', 'mdi')
@@ -589,11 +588,11 @@ function message_thread_get_messages($thread_id) {
   return $messages;
 }
 
-
 /**
  * Implements hook_ENTITY_TYPE_view_alter() for message thread entities.
  */
-function message_history_message_thread_view_alter(array &$build, EntityInterface $message_thread,
+function message_history_message_thread_view_alter(array &$build,
+                                                   EntityInterface $message_thread,
                                                    EntityViewDisplayInterface $display) {
   // Update the message_history table,
   // stating that this user viewed all messages in this thread.
@@ -609,7 +608,7 @@ function message_history_message_thread_view_alter(array &$build, EntityInterfac
   if (!\Drupal::currentUser()->isAuthenticated()) {
     return;
   }
-  //  Find all messages in this thread and mark them read
+  // Find all messages in this thread and mark them read.
   $messages = message_thread_get_messages($message_thread->id());
   foreach ($messages as $mid) {
     $build['#attached']['drupalSettings']['message_history']['itemsToMarkAsRead'][$mid] = TRUE;

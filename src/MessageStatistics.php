@@ -58,8 +58,7 @@ class MessageStatistics implements MessageStatisticsInterface {
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(Connection $database, AccountInterface $current_user, EntityManagerInterface $entity_manager, StateInterface $state)
-  {
+  public function __construct(Connection $database, AccountInterface $current_user, EntityManagerInterface $entity_manager, StateInterface $state) {
     $this->database = $database;
     $this->currentUser = $current_user;
     $this->entityManager = $entity_manager;
@@ -69,8 +68,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function read(array $entities, string $entity_type, $accurate = true)
-  {
+  public function read(array $entities, string $entity_type, $accurate = TRUE) {
     $options = $accurate ? [] : ['target' => 'replica'];
     $stats = $this->database->select('message_thread_statistics', 'mts', $options)
       ->fields('mts')
@@ -98,8 +96,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function create(FieldableEntityInterface $entity)
-  {
+  public function create(FieldableEntityInterface $entity) {
     $query = $this->database->insert('message_thread_statistics')
       ->fields([
         'entity_id',
@@ -134,7 +131,7 @@ class MessageStatistics implements MessageStatisticsInterface {
       'entity_type' => $entity->getEntityTypeId(),
       'mid' => 0,
       'last_message_timestamp' => $last_message_timestamp,
-      'last_message_name' => null,
+      'last_message_name' => NULL,
       'last_message_uid' => $last_message_uid,
       'message_count' => 0,
     ]);
@@ -145,16 +142,14 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMaximumCount($entity_type)
-  {
+  public function getMaximumCount($entity_type) {
     return $this->database->query('SELECT MAX(message_count) FROM {message_thread_statistics} WHERE entity_type = :entity_type', [':entity_type' => $entity_type])->fetchField();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getRankingInfo()
-  {
+  public function getRankingInfo() {
     return [
       'comments' => [
         'title' => t('Number of comments'),
@@ -173,7 +168,7 @@ class MessageStatistics implements MessageStatisticsInterface {
         // values in as strings instead of numbers in complex expressions like
         // this.
         'score' => '2.0 - 2.0 / (1.0 + ces.message_count * (ROUND(:message_scale, 4)))',
-        'arguments' => [':message_scale' => \Drupal::state()->get('message.node_message_statistics_scale') ? : 0],
+        'arguments' => [':message_scale' => \Drupal::state()->get('message.node_message_statistics_scale') ?: 0],
       ],
     ];
   }
@@ -181,8 +176,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * {@inheritdoc}
    */
-  public function update(Message $message)
-  {
+  public function update(Message $message) {
     $thread_id = message_thread_relationship($message->id());
     if (!$thread_id) {
       return;
@@ -227,7 +221,8 @@ class MessageStatistics implements MessageStatisticsInterface {
           'entity_type' => $message_thread->getEntityTypeId(),
         ])
         ->execute();
-    } else {
+    }
+    else {
       // Messages do not exist.
       $entity = $message_thread->id();
       // Get the user ID from the entity if it's set, or default to the

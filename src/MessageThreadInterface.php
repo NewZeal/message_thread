@@ -4,7 +4,6 @@ namespace Drupal\message_thread;
 
 use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Language\Language;
 
 /**
  * Provides an interface defining a Message entity.

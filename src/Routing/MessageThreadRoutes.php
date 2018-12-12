@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\message_thread\Routing.
- */
-
 namespace Drupal\message_thread\Routing;
 
 use Drupal\Core\Entity\EntityTypeManager;
@@ -18,8 +13,6 @@ use Symfony\Component\Routing\RouteCollection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
-
 /**
  * Defines dynamic routes.
  */
@@ -30,15 +23,18 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
    */
   protected $templateStorage;
 
+  /**
+   * The entity type manager.
+   */
   protected $entityTypeManager;
 
+  /**
+   * The route provider.
+   */
   protected $routeProvider;
 
   /**
    * Constructs the message thread template  form.
-   *
-   * @param \Drupal\message\MessagePurgePluginManager $purge_manager
-   *   The message purge plugin manager service.
    */
   public function __construct(EntityTypeManager $entity_type_manager, $template_storage, RouteProviderInterface $route_provider) {
     $this->templateStorage = $template_storage;
@@ -62,9 +58,8 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
    */
   public function routes() {
 
-
     $route_collection = new RouteCollection();
-    // Create a route for each template
+    // Create a route for each template.
     $thread_templates = $this->entityTypeManager->getListBuilder('message_thread_template')->load();
 
     foreach ($thread_templates as $name => $template) {
@@ -83,7 +78,7 @@ class MessageThreadRoutes implements ContainerInjectionInterface {
       $view->setDisplay($settings['thread_view_display_id']);
       $url = $view->getUrl()->toString();
 
-      // This is not going to work if the View is not placed in the User page
+      // This is not going to work if the View is not placed in the User page.
       $url = str_replace('%2A', '{user}', $url);
 
       $route = new Route(
