@@ -9,4 +9,3 @@ services:
     arguments: ['@database', '@current_user', '@entity.manager', '@state']
     tags:
       - { name: backend_overridable }
-
