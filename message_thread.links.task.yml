@@ -33,7 +33,3 @@ task.message_thread.admin:
   title: Message Threads
   route_name: message_thread.message_threads
   base_route: node.content_overview
-
-## Provide dynamic local tasks.
-#message_thread.dynamic_tasks:
-#  deriver: 'Drupal\message_thread\Plugin\Derivative\DynamicLocalTasks'
