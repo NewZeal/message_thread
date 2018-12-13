@@ -3,7 +3,6 @@
 namespace Drupal\Tests\message_thread\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\message_thread\Entity\MessageThread;
 use Drupal\simpletest\UserCreationTrait;
 
 /**
