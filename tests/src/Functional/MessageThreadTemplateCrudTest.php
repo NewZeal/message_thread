@@ -10,8 +10,9 @@ namespace Drupal\Tests\message_thread\Functional;
 class MessageThreadTemplateCrudTest extends MessageThreadTestBase {
 
   /**
-   * Currently experiencing schema errors
+   * Currently experiencing schema errors.
    *
+   * @var strictConfigSchema
    */
   protected $strictConfigSchema = FALSE;
 
@@ -32,7 +33,6 @@ class MessageThreadTemplateCrudTest extends MessageThreadTestBase {
       'template' => 'Template',
       'label' => 'Label',
       'description' => 'Description',
-      'text' => 'Text',
     ];
     foreach ($values as $key => $label) {
       $param = [

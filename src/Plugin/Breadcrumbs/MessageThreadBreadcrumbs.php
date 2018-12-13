@@ -8,12 +8,15 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Link;
 use Drupal\message_thread\Entity\MessageThread;
 
-class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
+/**
+ * MessageThreadBreadcrumbs class.
+ */
+class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface {
+
   /**
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $attributes) {
-//    ksm($attributes);
     $parameters = $attributes->getParameters()->all();
 
     if (!empty($parameters['message_thread'])) {
@@ -24,20 +27,19 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
     }
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function build(RouteMatchInterface $route_match) {
-//    ksm($route_match);
     $breadcrumb = new Breadcrumb();
     $parameters = $route_match->getParameters()->all();
     $user = \Drupal::currentUser();
     if (!empty($parameters['message_thread']) && is_object($parameters['message_thread'])) {
       $message_thread = $parameters['message_thread'];
 
-      // Get the parent messages link
-      // We use the current user as a reference since user can only view own messages
+      // Get the parent messages link.
+      // We use the current user as a reference
+      // since user can only view own messages.
       $thread_template = $message_thread->getTemplate();
 
       $breadcrumb->addLink(Link::createFromRoute(
@@ -46,19 +48,13 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
         ['user' => $user->id()]
       ));
 
-//      $breadcrumb->addLink(Link::createFromRoute(
-//        $message_thread->get('field_thread_title')->getValue()[0]['value'],
-//        'entity.message_thread.canonical', [
-//        'message_thread' => $message_thread->id()
-//      ]));
-
     }
     if (!empty($parameters['message'])) {
 
       $message = $parameters['message'];
       if ($message->bundle()) {
         $thread_id = message_thread_relationship($message->id());
-        // The message may not be associated with a thread
+        // The message may not be associated with a thread.
         if ($thread_id) {
           $message_thread = MessageThread::load($thread_id);
           $thread_template = $message_thread->getTemplate();
@@ -72,18 +68,16 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface{
           $breadcrumb->addLink(Link::createFromRoute(
             $message_thread->get('field_thread_title')->getValue()[0]['value'],
             'entity.message_thread.canonical', [
-              'message_thread' => $message_thread->id()
+              'message_thread' => $message_thread->id(),
             ]
           ));
 
         }
       }
-
-
     }
 
     $contexts = [
-      'url'
+      'url',
     ];
 
     $breadcrumb->addCacheContexts($contexts);

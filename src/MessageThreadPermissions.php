@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\message_thread\MessageThreadPermissions.
- */
-
 namespace Drupal\message_thread;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -12,6 +7,9 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Contains \Drupal\message_thread\MessageThreadPermissions.
+ */
 class MessageThreadPermissions implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
@@ -52,14 +50,17 @@ class MessageThreadPermissions implements ContainerInjectionInterface {
     foreach ($this->entityManager->getStorage('message_thread_template')->loadMultiple() as $template) {
       $permissions += [
         'create and receive ' . $template->id() . ' message threads' => [
-          'title' => $this->t('Able to participate in %thread threads', array('%thread' => $template->label())),
+          'title' => $this->t('Able to participate in %thread threads', ['%thread' => $template->label()]),
         ],
         'view own ' . $template->id() . ' message thread tab' => [
-          'title' => $this->t('View own %thread tab', array('%thread' => $template->label()))
-        ]
+          'title' => $this->t('View own %thread tab', [
+            '%thread' => $template->label(),
+          ]),
+        ],
       ];
     }
 
     return $permissions;
   }
+
 }

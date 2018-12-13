@@ -3,7 +3,6 @@
 namespace Drupal\message_thread;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Language\Language;
 
 /**
  * Provides an interface defining a Message template entity.

@@ -36,21 +36,6 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::settingsForm($form, $form_state);
 
-//    $types = Views::pluginList();
-//    $options = array();
-//    foreach ($types as $key => $type) {
-//      if ($type['type'] == 'display') {
-//        $options[str_replace('display:', '', $key)] = $type['title']->render();
-//      }
-//    }
-//
-//    $form['plugin_types'] = [
-//      '#type' => 'checkboxes',
-//      '#options' => $options,
-//      '#title' => $this->t('View display plugins to allow'),
-//      '#default_value' => $this->getSetting('plugin_types'),
-//    ];
-
     return $form;
   }
 
@@ -58,16 +43,16 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
     $settings = $this->getSettings();
 
-    $allowed = array();
+    $allowed = [];
     foreach ($settings['plugin_types'] as $type) {
       if ($type) {
         $allowed[] = $type;
       }
     }
-    $summary[] = t('Allowed plugins: @view', array('@view' => implode(', ', $allowed)));
+    $summary[] = t('Allowed plugins: @view', ['@view' => implode(', ', $allowed)]);
     return $summary;
   }
 
@@ -111,10 +96,10 @@ class MessageThreadMessagesFieldFormatter extends FormatterBase {
       if (!empty($view->result) || !empty($view->empty)) {
         if ($title) {
           $title = $view->getTitle();
-          $title_render_array = array(
+          $title_render_array = [
             '#theme' => 'viewsreference__view_title',
-            '#title' => $this->t($title),
-          );
+            '#title' => $title,
+          ];
         }
 
         if ($this->getSetting('plugin_types')) {
