@@ -10,7 +10,7 @@ use Drupal\Core\Extension\ModuleHandler;
 /**
  * Provides a 'Message History' Block with links to message thread.
  *
- * This block differs from the Private Messages New Messages block as follows.
+ * This block differs from the Private Messages New Messages block as follows:
  * Links to the thread and not the message.
  * History is reset when viewing thread and not message.
  *
@@ -101,7 +101,7 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
   }
 
   /**
-   * Get unread messages.
+   * Get the unread messages.
    */
   protected function getUnreadMessages() {
     // Find messages for the current user.
@@ -125,7 +125,7 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
   }
 
   /**
-   * Warning display.
+   * Provide a message.
    */
   protected function messageHistoryModuleRequired() {
     return [

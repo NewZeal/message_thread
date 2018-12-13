@@ -35,26 +35,19 @@ class MessageThreadTemplateForm extends EntityForm {
   /**
    * The template storage manager.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\\EntityStorageInterface
    */
   protected $templateStorage;
 
   /**
-   * The entity type manager.
+   * The purge plugin manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\message\MessagePurgePluginManager
    */
   protected $entityTypeManager;
 
   /**
    * Constructs the message thread template form.
-   *
-   * @param \Drupal\message\MessagePurgePluginManager $purge_manager
-   *   The message purge plugin manager service.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $template_storage
-   *   The message purge plugin manager service.
-   * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
-   *   The message purge plugin manager service.
    */
   public function __construct(MessagePurgePluginManager $purge_manager, EntityStorageInterface $template_storage, EntityTypeManager $entity_type_manager) {
     $this->purgeManager = $purge_manager;
@@ -128,7 +121,6 @@ class MessageThreadTemplateForm extends EntityForm {
       ]),
     ];
 
-    // Message thread views.
     $options = ['_none' => 'None'];
     $options += $this->getMessageViews('message_thread_field_data');
     $form['settings']['thread_view_id'] = [
@@ -175,7 +167,9 @@ class MessageThreadTemplateForm extends EntityForm {
 
     ];
 
-    // Message views.
+    /*
+     * Message Views
+     */
     $form['settings']['view_id'] = [
       '#title' => $this->t('Message View'),
       '#type' => 'select',
@@ -292,7 +286,7 @@ class MessageThreadTemplateForm extends EntityForm {
   }
 
   /**
-   * Get display ids of View.
+   * Get display ids for a View.
    */
   public function getThreadDisplayIds(array &$form, FormStateInterface $form_state) {
     return $this->getDisplayIds($form, $form_state, '.message-thread-view-display-id', 'thread_view_id');

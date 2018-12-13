@@ -9,7 +9,7 @@ use Drupal\Core\Link;
 use Drupal\message_thread\Entity\MessageThread;
 
 /**
- * Drupal\message_thread\Plugin\Breadcrumbs\MessageThreadBreadcrumbs.
+ * MessageThreadBreadcrumbs class.
  */
 class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface {
 
@@ -38,7 +38,8 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface {
       $message_thread = $parameters['message_thread'];
 
       // Get the parent messages link.
-      // Use current user as a reference since user can only view own messages.
+      // We use the current user as a reference
+      // since user can only view own messages.
       $thread_template = $message_thread->getTemplate();
 
       $breadcrumb->addLink(Link::createFromRoute(
@@ -73,7 +74,6 @@ class MessageThreadBreadcrumbs implements BreadcrumbBuilderInterface {
 
         }
       }
-
     }
 
     $contexts = [

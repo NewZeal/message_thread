@@ -18,21 +18,21 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   /**
    * The template storage manager.
    *
-   * @var templateStorage
+   * @var Drupal\Core\Entity\EntityStorageInterface
    */
   protected $templateStorage;
 
   /**
    * The entity type manager.
    *
-   * @var entityTypeManager
+   * @var Drupal\Core\Entity\EntityTypeManager
    */
   protected $entityTypeManager;
 
   /**
    * The route provider.
    *
-   * @var routeProvider
+   * @var Drupal\Core\Routing\RouteProviderInterface
    */
   protected $routeProvider;
 

@@ -56,6 +56,7 @@ class MessageThreadForm extends ContentEntityForm {
       $form['created']['#group'] = 'owner';
     }
 
+    // @todo: assess the best way to access and create tokens tab from D7.
     // @todo : add similar to node/from library, adding css for
     // 'message-form-owner' class.
     // $form['#attached']['library'][] = 'node/form';
@@ -105,7 +106,7 @@ class MessageThreadForm extends ContentEntityForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    // Add owner as a  participant.
+    // Add owner as a  participant
     // We do this before the parent::submit to ensure the value is saved.
     $values = $form_state->getValues();;
     $found = FALSE;

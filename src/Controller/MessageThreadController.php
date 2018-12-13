@@ -6,9 +6,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\message_thread\Entity\MessageThread;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\message_thread\MessageThreadTemplateInterface;
 use Drupal\message\Entity\Message;
-use Drupal\message\MessageTemplateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\views\Views;
 
@@ -77,15 +75,15 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   }
 
   /**
-   * Form output to add a new message entity of message_thread_template.
+   * Generates form output for adding a new message_thread_template.
    *
-   * @param \Drupal\message\MessageThreadTemplateInterface $message_thread_template
-   *   The message template object.
+   * @param string $message_thread_template
+   *   The message template name.
    *
    * @return array
    *   An array as expected by drupal_render().
    */
-  public function add(MessageThreadTemplateInterface $message_thread_template) {
+  public function add($message_thread_template) {
     $message_thread = MessageThread::create(['template' => $message_thread_template]);
     $form = $this->entityFormBuilder()->getForm($message_thread);
 
@@ -93,9 +91,17 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   }
 
   /**
-   * Form output to add a message entity of message_template inside a thread.
+   * Generates form output for adding a new message entity inside a thread.
+   *
+   * @param string $message_template
+   *   The message template name.
+   * @param string $message_thread
+   *   The message thread id.
+   *
+   * @return array
+   *   An array as expected by drupal_render().
    */
-  public function reply(MessageTemplateInterface $message_template, $message_thread) {
+  public function reply($message_template, $message_thread) {
     $message = Message::create(['template' => $message_template]);
     $form = $this->entityFormBuilder()->getForm($message);
 
@@ -134,7 +140,7 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
    * Generates output of all threads belonging to the current user.
    *
    * @return array
-   *   A render array for a list of the messages;
+   *   A render array for a list of the messages.
    */
   public function inBox() {
     // Get threads that the current user belongs to.
@@ -167,7 +173,6 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
 
     $view->preExecute();
     $view->execute($display_id);
-
     $message_threads = $view->buildRenderable($display_id);
 
     // Return build array.
@@ -177,7 +182,8 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
     else {
       $url = Url::fromRoute('message.template_add');
       return [
-        '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' . $url->getInternalPath() . '">sending a message to someone</a>.',
+        '#markup' => 'You have no messages in your inbox. Try sending a message to someone <a href="/' .
+        $url->getInternalPath() . '">sending a message to someone</a>.',
       ];
     }
   }
@@ -185,18 +191,21 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   /**
    * Message thread title.
    *
-   * @param Drupal\message_thread\Entity\MessageThread|null $message_thread
-   *   The message thread object.
+   * @param \Drupal\message_thread\Entity\MessageThread $message_thread
+   *   Message thread object.
    *
    * @return array|string
-   *   The title.
+   *   Markup.
    */
   public function messageThreadTitle(MessageThread $message_thread = NULL) {
     return $message_thread ? ['#markup' => $message_thread->get('field_thread_title')->getValue()[0]['value'], '#allowed_tags' => Xss::getHtmlTagList()] : '';
   }
 
   /**
-   * Display sent message threads using a view.
+   * Generates form output for adding a new message entity of message_template.
+   *
+   * @return array
+   *   An array as expected by drupal_render().
    */
   public function sent() {
     $view_name = 'conversations';

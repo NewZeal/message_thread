@@ -6,7 +6,7 @@ use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorageSchema;
 
 /**
- * Defines the term schema handler.
+ * Defines the  message thread schema handler.
  */
 class MessageThreadStorageSchema extends SqlContentEntityStorageSchema {
 
