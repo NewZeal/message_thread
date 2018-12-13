@@ -42,22 +42,4 @@ class MessageThreadThemeTest extends KernelTestBase {
     $this->account = $this->createUser();
   }
 
-  /**
-   * Test that message render returns message text wrapped in a div.
-   */
-  public function testMessageTextWrapper() {
-    $template = 'dummy_message_thread';
-    // Create message thread to be rendered.
-    $message_thread_template = $this->createMessageThreadTemplate($template, 'Dummy message thread', '', ['Text to be wrapped by div.']);
-    $message_thread = MessageThread::create(['template' => $message_thread_template->id()])
-      ->setOwner($this->account);
-
-    $message_thread->save();
-
-    // Simulate theming of the message.
-    $build = $this->container->get('entity_type.manager')->getViewBuilder('message_thread')->view($message_thread);
-    $output = $this->container->get('renderer')->renderRoot($build);
-    $this->setRawContent($output);
-  }
-
 }
