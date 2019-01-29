@@ -476,6 +476,20 @@ function message_thread_message_delete(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function message_thread_message_thread_delete(EntityInterface $entity) {
+  // Delete all associated messages.
+  $mids = message_thread_get_messages($entity->id());
+  foreach ($mids as $mid) {
+    db_delete('message_thread_index', ['mid' => $mid]);
+    $message = Message::load($mid);
+    $message->delete();
+  }
+
+}
+
+/**
  * Helper function to return number of messages attached to a thread.
  */
 function message_thread_message_count($entity) {

@@ -182,6 +182,10 @@ class MessageStatistics implements MessageStatisticsInterface {
       return;
     }
     $message_thread = MessageThread::load($thread_id);
+    // This is relevant during a delete operation.
+    if (!$message_thread) {
+      return;
+    }
     // Allow bulk updates and inserts to temporarily disable the maintenance of
     // the {message_thread_statistics} table.
     if (!$this->state->get('message.maintain_entity_statistics')) {
