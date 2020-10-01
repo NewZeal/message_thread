@@ -5,7 +5,6 @@
  * Module functions and hooks for message_thread.
  */
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -22,6 +21,10 @@ use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Xss;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Entity\â€‹EntityTypeManagerInterface;
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_installed().
@@ -122,12 +125,12 @@ function message_thread_form_alter(array &$form, FormStateInterface $form_state,
 function message_thread_submit_message(array &$form, FormStateInterface $form_state) {
   $thread_id = $form_state->getValue('message_thread');
   // Save the relationship between the thread and the message.
-  db_insert('message_thread_index')
+  \Drupal::database()->insert('message_thread_index')
     ->fields(
       [
         'mid' => $form_state->getValue('mid'),
         'thread_id' => $thread_id,
-        'created' => REQUEST_TIME,
+        'created' => \Drupal::time()->getRequestTime(),
       ]
     )->execute();
 
@@ -226,12 +229,12 @@ function message_thread_preprocess_links(&$variables) {
       $route_parameters = $link['link']['#url']->getRouteParameters();
 
       $entity_type = key($route_parameters);
-      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($route_parameters[$entity_type]);
+      $entity = â€‹EntityTypeManagerInterface::getStorage($entity_type)->load($route_parameters[$entity_type]);
 
       if (!$entity) {
         continue;
       }
-      $operation = strtolower($link['link']['#title']->__toString());
+      $operation = mb_strtolower($link['link']['#title']->__toString());
       if (substr($route_name, 0, 15) == 'entity.message.') {
         // $message_access_manager =
         // new MessagePrivateAccessControlHandler($entity->getEntityType());.
@@ -300,7 +303,7 @@ function template_preprocess_message_thread(array &$variables) {
   $variables['date'] = \Drupal::service('renderer')->render($variables['elements']['created']);
   $variables['author_name'] = \Drupal::service('renderer')->render($variables['elements']['uid']);
 
-  $variables['url'] = $message_thread->url('canonical', [
+  $variables['url'] = $message_thread->EntityBase::toUrl('canonical', [
     'language' => $message_thread->language(),
   ]);
 
@@ -318,7 +321,7 @@ function template_preprocess_message_thread(array &$variables) {
  * Implements hook_entity_extra_field_info().
  */
 function message_thread_entity_extra_field_info() {
-  $bundles = \Drupal::entityManager()->getBundleInfo('message_thread');
+  $bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('message_thread');
 
   foreach ($bundles as $machine_name => $bundle) {
 
@@ -469,8 +472,8 @@ function message_thread_message_delete(EntityInterface $entity) {
   // Delete from index when deleting a private message.
   switch ($entity->getTemplate()->id()) {
     case 'private_message':
-      drupal_set_message(t('Deleting index'));
-      db_delete('message_thread_index', ['mid' => $entity->id()]);
+      \Drupal::messenger()->addStatus(t('Deleting index'));
+      \Drupal::database()->delete('message_thread_index', ['mid' => $entity->id()]);
       break;
   }
 }
@@ -563,7 +566,7 @@ function message_thread_tab_access_check() {
  * Helper function to relate a message to its thread.
  */
 function message_thread_relationship($mid) {
-  $thread_id = db_select('message_thread_index', 'mdi')
+  $thread_id = \Drupal::database()->select('message_thread_index', 'mdi')
     ->condition('mdi.mid', $mid)
     ->fields('mdi', ['thread_id'])
     ->execute()
@@ -576,7 +579,7 @@ function message_thread_relationship($mid) {
  * Helper function to get all message ids in a thread.
  */
 function message_thread_get_messages($thread_id) {
-  $result = db_select('message_thread_index', 'mdi')
+  $result = \Drupal::database()->select('message_thread_index', 'mdi')
     ->condition('mdi.thread_id', $thread_id)
     ->fields('mdi', ['mid'])
     ->execute()

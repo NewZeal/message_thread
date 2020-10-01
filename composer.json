@@ -8,7 +8,7 @@
   "homepage": "https://www.drupal.org/project/message_thread",
   "require": {
     "php": "^5.5|^7.0",
-    "drupal/core": "^8.6",
+    "drupal/core": "^8.8 || ^9",
     "drupal/message": "^1.0",
     "drupal/message_history": "dev-1.x",
     "drupal/message_notify": "^1.0",

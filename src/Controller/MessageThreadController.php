@@ -33,8 +33,8 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
    * Constructs a MessageUiController object.
    */
   public function __construct() {
-    $this->entityManager = \Drupal::entityManager();
-    $this->accessHandler = \Drupal::entityManager()->getAccessControlHandler('message_thread');
+    $this->entityManager = \Drupal::service('entity_type.manager');
+    $this->accessHandler = \Drupal::service('entity_type.manager')->getAccessControlHandler('message_thread');
   }
 
   /**
@@ -49,8 +49,8 @@ class MessageThreadController extends ControllerBase implements ContainerInjecti
   public function addPage() {
     $content = [];
     // Only use message templates the user has access to.
-    foreach ($this->entityManager()->getStorage('message_thread_template')->loadMultiple() as $template) {
-      $access = $this->entityManager()
+    foreach (\Drupal::service('entity_type.manager')->getStorage('message_thread_template')->loadMultiple() as $template) {
+      $access = \Drupal::service('entity_type.manager')
         ->getAccessControlHandler('message_thread')
         ->createAccess($template->id(), NULL, [], TRUE);
       if ($access->isAllowed()) {

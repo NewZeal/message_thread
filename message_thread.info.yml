@@ -1,6 +1,6 @@
 name: 'Message Thread'
 description: 'Enable messages to be grouped into threads or conversations.'
-core: 8.x
+core_version_requirement: ^8.8 || ^9
 package: Message
 type: module
 configure: message_thread.admin_settings

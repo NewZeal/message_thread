@@ -5,7 +5,7 @@ namespace Drupal\Tests\message_thread\Kernel;
 use Drupal\Component\Utility\Unicode;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message_thread\Entity\MessageThread;
-use Drupal\simpletest\UserCreationTrait;
+use Drupal\Tests\user\Traits\UserCreationTrait;
 
 /**
  * Kernel tests for the Message entity.
@@ -48,7 +48,7 @@ class MessageThreadTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installSchema('system', ['sequences']);
     $this->entityTypeManager = $this->container->get('entity_type.manager');
-    $this->messageThreadTemplate = $this->createMessageThreadTemplate(Unicode::strtolower($this->randomMachineName()), $this->randomString(), $this->randomString(), []);
+    $this->messageThreadTemplate = $this->createMessageThreadTemplate(mb_strtolower($this->randomMachineName()), $this->randomString(), $this->randomString(), []);
   }
 
   /**

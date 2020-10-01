@@ -105,7 +105,8 @@ function message_thread_schema() {
  * Remove the index table.
  */
 function message_thread_uninstall() {
-  db_drop_table('message_thread_index');
+  $schema = \Drupal::database()->schema();
+  $schema->dropTable('message_thread_index');
 }
 
 /**
@@ -114,7 +115,8 @@ function message_thread_uninstall() {
  * Add new table for statistics.
  */
 function message_thread_update_8002() {
-  if (db_table_exists('message_thread_statistics')) {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('message_thread_statistics')) {
     return;
   }
   $schema_manager = Database::getConnection()->schema();

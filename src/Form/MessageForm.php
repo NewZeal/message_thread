@@ -64,7 +64,7 @@ class MessageForm extends MessageMessageForm {
     // message.
     // In the unlikely case something went wrong on save, the message will be
     // rebuilt and message form redisplayed.
-    drupal_set_message(t('The message could not be saved.'), 'error');
+    \Drupal::messenger()->addStatus(t('The message could not be saved.'), 'error');
     $form_state->setRebuild();
   }
 

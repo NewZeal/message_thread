@@ -38,7 +38,7 @@ trait MessageThreadTemplateCreateTrait {
         'clear' => FALSE,
       ],
     ];
-    $template = $template ?: Unicode::strtolower($this->randomMachineName());
+    $template = $template ?: mb_strtolower($this->randomMachineName());
     $label = $label ?: $this->randomString();
     $description = $description ?: $this->randomString();
     $text = $text ?: [$this->randomString()];

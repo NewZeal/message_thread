@@ -30,7 +30,7 @@ class MessageThreadTemplateListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['title'] = [
-      'data' => $this->getLabel($entity),
+      'data' => $entity->getLabel(),
       'class' => ['menu-label'],
     ];
     $row['description'] = Xss::filterAdmin($entity->getDescription());

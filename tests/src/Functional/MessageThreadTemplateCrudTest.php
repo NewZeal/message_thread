@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\message_thread\Functional;
 
+use Drupal\Component\Render\FormattableMarkup;
+
 /**
  * Testing the CRUD functionality for the Message template entity.
  *
@@ -39,7 +41,7 @@ class MessageThreadTemplateCrudTest extends MessageThreadTestBase {
         '@label' => $label,
       ];
 
-      $this->assertEqual(call_user_func([$template, 'get' . $key]), call_user_func([$created_message_template, 'get' . $key]), format_string('The @label between the message we created an loaded are equal', $param));
+      $this->assertEqual(call_user_func([$template, 'get' . $key]), call_user_func([$created_message_template, 'get' . $key]), new FormattableMarkup('The @label between the message we created an loaded are equal', $param));
     }
 
     // Verifying updating action.

@@ -34,7 +34,7 @@ class MessageThreadViewBuilder extends EntityViewBuilder {
     $extra = '';
 
     // Get the partials the user selected for the current view mode.
-    $extra_fields = entity_get_display('message', $entity->bundle(), $view_mode);
+    $extra_fields = \Drupal::service('entity_display.repository')->getViewDisplay('message', $entity->bundle(), $view_mode);
     foreach ($extra_fields->getComponents() as $field_name => $settings) {
       $display = $this->getSingleFieldDisplay($entity, $field_name, $settings);
       $build += $display->build($entity);

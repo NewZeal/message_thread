@@ -353,7 +353,7 @@ class MessageThreadTemplateForm extends EntityForm {
       '@template' => $form_state->getValue('label'),
     ];
 
-    drupal_set_message(t('The message thread template @template created successfully.', $params));
+    $this->messenger()->addStatus(t('The message thread template @template created successfully.', $params));
     $form_state->setRedirect('message_thread.overview_templates');
     return $this->entity;
   }

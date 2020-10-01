@@ -3,6 +3,7 @@
 namespace Drupal\message_thread\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -148,7 +149,7 @@ class MessageThreadForm extends ContentEntityForm {
       $message_thread->setCreatedTime(strtotime($created));
     }
     else {
-      $message_thread->setCreatedTime(REQUEST_TIME);
+      $message_thread->setCreatedTime(\Drupal::time()->getRequestTime());
     }
   }
 
@@ -162,7 +163,7 @@ class MessageThreadForm extends ContentEntityForm {
     $message_thread->save();
 
     // Set up message link and status message contexts.
-    $message_thread_link = $message_thread->link($this->t('View'));
+    $message_thread_link = $message_thread->EntityInterface::toLink($this->t('View'));
     $context = [
       '@type' => $message_thread->getTemplate()->id(),
       '%title' => 'Message:' . $message_thread->id(),
@@ -176,11 +177,11 @@ class MessageThreadForm extends ContentEntityForm {
     // Display newly created or updated message depending on if new entity.
     if ($insert) {
       $this->logger('content')->notice('@type: added %title.', $context);
-      drupal_set_message(t('@type %title has been created.', $t_args));
+      $this->messenger()->addStatus(t('@type %title has been created.', $t_args));
     }
     else {
       $this->logger('content')->notice('@type: updated %title.', $context);
-      drupal_set_message(t('@type %title has been updated.', $t_args));
+      $this->messenger()->addStatus(t('@type %title has been updated.', $t_args));
     }
 
     // Redirect to message thread view display if user has access.
@@ -199,7 +200,7 @@ class MessageThreadForm extends ContentEntityForm {
     else {
       // In the unlikely case something went wrong on save, the message will be
       // rebuilt and message form redisplayed.
-      drupal_set_message(t('The message thread could not be saved.'), 'error');
+      $this->messenger()->addError(t('The message thread could not be saved.'));
       $form_state->setRebuild();
     }
   }

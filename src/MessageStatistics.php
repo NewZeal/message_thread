@@ -6,7 +6,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -35,7 +35,7 @@ class MessageStatistics implements MessageStatisticsInterface {
   /**
    * The entity manager service.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
@@ -53,15 +53,15 @@ class MessageStatistics implements MessageStatisticsInterface {
    *   The active database connection.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current logged in user.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(Connection $database, AccountInterface $current_user, EntityManagerInterface $entity_manager, StateInterface $state) {
+  public function __construct(Connection $database, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, StateInterface $state) {
     $this->database = $database;
     $this->currentUser = $current_user;
-    $this->entityManager = $entity_manager;
+    $this->entityManager = $entity_type_manager;
     $this->state = $state;
   }
 
@@ -120,7 +120,7 @@ class MessageStatistics implements MessageStatisticsInterface {
       $last_message_uid = $this->currentUser->id();
     }
     // Default to REQUEST_TIME when entity does not have a changed property.
-    $last_message_timestamp = REQUEST_TIME;
+    $last_message_timestamp = \Drupal::time()->getRequestTime();
     // @todo Make comment statistics language aware and add some tests. See
     //   https://www.drupal.org/node/2318875
     if ($entity instanceof EntityChangedInterface) {
@@ -241,7 +241,7 @@ class MessageStatistics implements MessageStatisticsInterface {
           'message_count' => 0,
           // Use the changed date of the entity if it's set, or default to
           // REQUEST_TIME.
-          'last_message_timestamp' => ($entity instanceof EntityChangedInterface) ? $entity->getChangedTimeAcrossTranslations() : REQUEST_TIME,
+          'last_message_timestamp' => ($entity instanceof EntityChangedInterface) ? $entity->getChangedTimeAcrossTranslations() : \Drupal::time()->getRequestTime(),
           'last_message_name' => '',
           'last_message_uid' => $last_message_uid,
         ])

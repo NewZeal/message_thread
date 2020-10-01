@@ -129,7 +129,7 @@ class MessageThreadAccessControlHandler extends EntityAccessControlHandler {
     // With no bundle, e.g. on message thread/add,
     // check access to any message thread bundle.
     // @todo: perhaps change this method to a service as in NodeAddAccessCheck.
-    foreach (\Drupal::entityManager()->getStorage('message_thread_template')->loadMultiple() as $template) {
+    foreach (\Drupal::service('entity_type.manager')->getStorage('message_thread_template')->loadMultiple() as $template) {
       $access = AccessResult::allowedIfHasPermission($account, 'create and receive ' . $template->id() . ' message threads');
 
       // If access is allowed to any of the existing bundles return allowed.

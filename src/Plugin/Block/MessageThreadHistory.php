@@ -105,7 +105,7 @@ class MessageThreadHistory extends BlockBase implements ContainerFactoryPluginIn
    */
   protected function getUnreadMessages() {
     // Find messages for the current user.
-    return db_query("SELECT mfd.mid, mfd.uid, ufd.name
+    return \Drupal::database()->query("SELECT mfd.mid, mfd.uid, ufd.name
       FROM {message_field_data} mfd
       LEFT JOIN {message__field_message_private_to_user} pu
       ON mfd.mid = pu.entity_id
